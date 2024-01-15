@@ -38,7 +38,7 @@ library(stemv)
 
 ## Example
 
-利用する立木幹材積式の種類（地域と樹種）がわかっている場合、胸高直径（DBH）と樹高から材積を計算できます。
+利用する立木幹材積式の種類（地域と樹種の組み合わせ）がわかっている場合、胸高直径（DBH）と樹高（H）から材積を計算できます。
 
 ```{r example}
 library(stemv)
@@ -84,7 +84,7 @@ volumeName("東京", "バナナ")
 volumeName("アメリカ", "トドマツ")
 
 ## return specific string if the region does not much ones in the list
-volumeName("アメリカ", "トドマツ", name_invalid = "合致しない")
+volumeNameSingle("アメリカ", "トドマツ", name_invalid = "合致しない")
 ```
 
 立木幹材積の計算はベクトルでも実行できます。
@@ -100,7 +100,7 @@ dt |>
 ```
 
 幹材積の計算では、細田ら(2010)の方法に従い必要な箇所は材積式の各接合部に移動平均を適用しています。
-もし、移動平均を適用しない場合の計算結果を求めたい場合、`stemVolumeSingle`関数を利用してください。
+もし、移動平均を適用しない計算結果を求めたい場合、`stemVolumeSingle`関数を利用してください。
 ただし、この関数はベクトルを処理できないので単一の値のみ渡してください。
 複数の立木を処理したい場合はfor構文か`purrr::map`系列の関数を利用してください
 
@@ -120,7 +120,7 @@ purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
 
 ## Differnces from calculation program (Excel version)
 
-「幹材積計算プログラム」とこのパッケージは独立しており、いくつかの点で差異があります。  
+「幹材積計算プログラム」（Excel版）とこのパッケージは独立しており、いくつかの点で差異があります。  
 
 - 幹材積計算プログラムにおける「札幌トドマツ」、「高知天然スギ」、「青森アカマツ」に対する
 追加の修正を反映していない。
