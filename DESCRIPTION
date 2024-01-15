@@ -14,3 +14,5 @@ Imports:
     purrr,
     stringi,
     stringr
+URL: https://github.com/dulvrq/stemv
+BugReports: https://github.com/dulvrq/stemv/issues
