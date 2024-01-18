@@ -1,5 +1,5 @@
 
-# to prevent Notes in R CMD check
-# see https://community.rstudio.com/t/how-to-solve-no-visible-binding-for-global-variable-note/28887
+# to prevent Notes in the R CMD check
+# see https://r-pkgs.org/package-within.html#echo-a-working-package
 
 utils::globalVariables(c("region", "species", ".", "name", "D_lower"))
