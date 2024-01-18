@@ -6,7 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-このパッケージは単木の胸高直径、樹高および樹種と地域から立木幹材積を計算する関数を提供します。  
+このパッケージは単木の胸高直径、樹高および樹種と地域（日本国内）から立木幹材積を計算する関数を提供します。  
 計算方法は林野庁（1970）「立木幹材積表 東日本編」「立木幹材積表
 西日本編」の書籍とその修正を 提案した細田ら（2010）森林計画学会誌
 44:23-39 の論文に基づいています。  
@@ -37,8 +37,8 @@ stemVolume(Name, D, H)
 #> [1] 0.1893091
 ```
 
-地域と樹種から立木幹材積式の種類を特定できます。地域名は都道府県支庁名または旧営林局です。
-北海道については、森林生態系多様性基礎調査データを処理できるよう森林計画区も指定できるように設定しています。
+地域と樹種から立木幹材積式の種類を特定できます。地域名は都道府県支庁名または旧営林局名です。
+北海道については、森林生態系多様性基礎調査データの処理のため森林計画区名も指定できるように設定しています。
 
 ``` r
 Region <- "高知県"
@@ -75,8 +75,10 @@ volumeName("東京", "バナナ")
 ## cause error because America is not in the list
 volumeName("アメリカ", "トドマツ")
 #> Error in volumeNameSingle(Region, Spp, RS): No such region.
+```
 
-## return specific string if the region does not much ones in the list
+``` r
+## return specific string if the region does not much any one in the list
 volumeNameSingle("アメリカ", "トドマツ", name_invalid = "合致しない")
 #> [1] "合致しない"
 ```
@@ -102,7 +104,7 @@ dt |>
 幹材積の計算では、細田ら(2010)の方法に従い必要な箇所は材積式の各接合部に移動平均を適用しています。
 もし、移動平均を適用しない計算結果を求めたい場合、`stemVolumeSingle`関数を利用してください。
 ただし、この関数はベクトルを処理できないので単一の値のみ渡してください。
-複数の立木を処理したい場合はfor構文か`purrr::map`系列の関数を利用してください
+複数の立木を処理したい場合はfor構文か`purrr::map`系列の関数を利用してください。
 
 ``` r
 ## apply moving average adjustment
@@ -121,7 +123,7 @@ purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
 #> [1] 0.2200923 2.2230540 0.8597140 1.3602628 1.4668625
 ```
 
-## Differnces from calculation program (Excel version)
+## Differences from calculation program (Excel version)
 
 「幹材積計算プログラム」（Excel版）とこのパッケージは独立しており、いくつかの点で差異があります。
 
