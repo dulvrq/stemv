@@ -127,11 +127,447 @@ purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
 
 「幹材積計算プログラム」（Excel版）とこのパッケージは独立しており、いくつかの点で差異があります。
 
-- 幹材積計算プログラムにおける「札幌トドマツ」、「高知天然スギ」、「青森アカマツ」に対する
-  追加の修正を反映していない。
-- 「青森広葉樹」、「高知広葉樹」の5点移動平均の当てはめ範囲が異なる。
-- 胸高形数法における四捨五入計算の際、一部で浮動小数点の誤差が発生する（北海道針葉樹）。
-- 一部の計算における係数の有効数字が異なる。
+1.  幹材積計算プログラムにおける「札幌トドマツ」、「高知天然スギ」、「青森アカマツ」に対する
+    追加の修正を反映していない。
+2.  「青森広葉樹」、「高知広葉樹」の5点移動平均の当てはめ範囲が異なる。
+3.  胸高形数法における四捨五入計算の際、一部で浮動小数点の誤差が発生する（北海道針葉樹）。
+4.  一部の計算における係数の有効数字が異なる。
+
+各材積計算式におけるDBH: 0~200 cm (1 cmごと) および H: 0~50 m (1 mごと)
+の各組み合わせについて、幹材積計算プログラムと
+`stemVolume()`との材積の計算結果を比較すると以下のようになります。
+
+- 誤差が0.0001m<sup>3</sup>以上になる組み合わせは、全体の1.4%で0.01m<sup>3</sup>以上になる組み合わせは0.2%です。
+- このうち、0.01m<sup>3</sup>以上の誤差は全て上記1. ~ 3.
+  に起因し、0.0001m<sup>3</sup>以上の誤差は全て上記1. ~ 4.に起因します。
+
+<table>
+<caption>
+差が存在する材積式における誤差
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+計算式名
+</th>
+<th style="text-align:right;">
+組み合わせ数
+</th>
+<th style="text-align:right;">
+差≥0.01の数
+</th>
+<th style="text-align:right;">
+差≥0.0001の数
+</th>
+<th style="text-align:right;">
+平均絶対誤差
+</th>
+<th style="text-align:right;">
+最大誤差
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+札幌トドマツ
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+428
+</td>
+<td style="text-align:right;">
+459
+</td>
+<td style="text-align:right;">
+0.0033
+</td>
+<td style="text-align:right;">
+0.1438
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+函館エゾマツ
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+6925
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+<td style="text-align:right;">
+0.0009
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+青森アカマツ
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+656
+</td>
+<td style="text-align:right;">
+850
+</td>
+<td style="text-align:right;">
+0.0038
+</td>
+<td style="text-align:right;">
+0.2963
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+青森広葉樹
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:right;">
+50
+</td>
+<td style="text-align:right;">
+0.0002
+</td>
+<td style="text-align:right;">
+0.0435
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+長野カラマツ
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+3336
+</td>
+<td style="text-align:right;">
+0.0001
+</td>
+<td style="text-align:right;">
+0.0005
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+高知天然スギ
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+353
+</td>
+<td style="text-align:right;">
+416
+</td>
+<td style="text-align:right;">
+0.0028
+</td>
+<td style="text-align:right;">
+0.6360
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+高知広葉樹
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+43
+</td>
+<td style="text-align:right;">
+51
+</td>
+<td style="text-align:right;">
+0.0002
+</td>
+<td style="text-align:right;">
+0.0556
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+北海道針葉樹
+</td>
+<td style="text-align:right;">
+10251
+</td>
+<td style="text-align:right;">
+120
+</td>
+<td style="text-align:right;">
+192
+</td>
+<td style="text-align:right;">
+0.0004
+</td>
+<td style="text-align:right;">
+0.0000
+</td>
+</tr>
+</tbody>
+</table>
+
+## Differences from stem volume table
+
+「立木幹材積表
+東日本編・西日本編」における幹材積表と比較すると以下の通りになります。
+
+- 小数点第2位を四捨五入して一致しない組み合わせは全体の4.7%です。
+- 誤差が0.01m<sup>3</sup>以上になる組み合わせは全体の1.2%です。
+
+<table>
+<caption>
+一致しない数が多い10種類の材積式における誤差
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+計算式名
+</th>
+<th style="text-align:right;">
+組み合わせ数
+</th>
+<th style="text-align:right;">
+一致しない数
+</th>
+<th style="text-align:right;">
+差≥0.01の数
+</th>
+<th style="text-align:right;">
+平均絶対誤差
+</th>
+<th style="text-align:right;">
+最大誤差
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+青森ヒバ
+</td>
+<td style="text-align:right;">
+1313
+</td>
+<td style="text-align:right;">
+408
+</td>
+<td style="text-align:right;">
+107
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+札幌トドマツ
+</td>
+<td style="text-align:right;">
+1714
+</td>
+<td style="text-align:right;">
+303
+</td>
+<td style="text-align:right;">
+134
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+北見エゾマツ
+</td>
+<td style="text-align:right;">
+1206
+</td>
+<td style="text-align:right;">
+244
+</td>
+<td style="text-align:right;">
+112
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+青森アカマツ
+</td>
+<td style="text-align:right;">
+803
+</td>
+<td style="text-align:right;">
+222
+</td>
+<td style="text-align:right;">
+140
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+0.11
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+高知天然スギ
+</td>
+<td style="text-align:right;">
+2251
+</td>
+<td style="text-align:right;">
+210
+</td>
+<td style="text-align:right;">
+172
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+0.31
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+青森広葉樹
+</td>
+<td style="text-align:right;">
+1972
+</td>
+<td style="text-align:right;">
+198
+</td>
+<td style="text-align:right;">
+78
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+札幌エゾマツ
+</td>
+<td style="text-align:right;">
+1696
+</td>
+<td style="text-align:right;">
+183
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+関東中部ツガ
+</td>
+<td style="text-align:right;">
+1592
+</td>
+<td style="text-align:right;">
+181
+</td>
+<td style="text-align:right;">
+38
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+函館ヒバ
+</td>
+<td style="text-align:right;">
+1164
+</td>
+<td style="text-align:right;">
+179
+</td>
+<td style="text-align:right;">
+57
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+高知天然ヒノキ
+</td>
+<td style="text-align:right;">
+1985
+</td>
+<td style="text-align:right;">
+177
+</td>
+<td style="text-align:right;">
+103
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+</tr>
+</tbody>
+</table>
 
 ## Reference
 

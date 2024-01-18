@@ -8,14 +8,14 @@ stemVolumeSingle(Name, D, H, list_data = NULL, off_adj = FALSE)
 }
 \arguments{
 \item{Name}{Japanese character for identifying the calculation methods (e.g., \code{東京スギ}).
-This is expected from \link{volumeName}.}
+This is expected from \code{\link[=volumeName]{volumeName()}}.}
 
 \item{D}{Numeric. DBH in cm.}
 
 \item{H}{Numeric. Tree height in m.}
 
-\item{list_data}{A list of data for coefficients. This is expected from \link{getStemCoefficients}.
-If NULL, internally call \link{getStemCoefficients}.}
+\item{list_data}{A list of data for coefficients. This is expected from \code{\link[=getStemCoefficients]{getStemCoefficients()}}.
+If NULL, internally call \code{\link[=getStemCoefficients]{getStemCoefficients()}}.}
 
 \item{off_adj}{Logical. If TRUE, all moving average adjustment for junctions become inactive.}
 }
@@ -24,10 +24,10 @@ Calculated stem volume
 }
 \description{
 Calculate stem volume using coefficients & following the methods described in Hosoda et al. (2010).
-This function only accepts single numeric value for D & H. To handle numeric vector, use \link{stemVolume}.\cr
+This function only accepts single numeric value for D & H. To handle numeric vector, use \code{\link[=stemVolume]{stemVolume()}}.\cr
 VERY SLOW if this is used for processing large amount of data.
 
-Different from \link{stemVolume}, this function can turn off the 3/5 points moving average adjustment if preferred.
+Different from \code{\link[=stemVolume]{stemVolume()}}, this function can turn off the 3/5 points moving average adjustment if preferred.
 }
 \details{
 For details, please see the following reference:\cr

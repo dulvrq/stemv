@@ -8,7 +8,7 @@ stemVolume(Name, D, H)
 }
 \arguments{
 \item{Name}{Japanese character for identifying the calculation methods (e.g., \code{東京スギ}).
-This is expected from \link{volumeName}.}
+This is expected from \code{\link[=volumeName]{volumeName()}}.}
 
 \item{D}{Numeric. DBH in cm.}
 

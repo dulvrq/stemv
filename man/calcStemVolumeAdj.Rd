@@ -23,7 +23,7 @@ Calculated stem volume
 \description{
 Calculate stem volume using an equation corresponding with the equation type.
 \code{calcStemVolumeAdj()} only accepts single numeric value for D & H.
-To handle numeric vector, use \link{calcStemVolumeMulti}.
+To handle numeric vector, use \code{\link[=calcStemVolumeMulti]{calcStemVolumeMulti()}}.
 }
 \details{
 This is a wrapper function to apply 3/5- points moving window average for calculating stem volume
