@@ -3,7 +3,7 @@ Title: Calculate Tree Stem Volume in Japan
 Version: 0.0.0.9000
 Authors@R: 
     person("Katsuto", "Shimizu", , "katsutoshimizu@ffpri.affrc.go.jp", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+           comment = c(ORCID = "0000-0002-3826-5659"))
 Description: Calculate stem volume of individual trees based on DBH, H, region, and species in Japan. The calculation is based on description in Hosoda et al. (2010) Jpn. J. For. Plann. 44, 23-39.
 License: MIT + file LICENSE
 Encoding: UTF-8

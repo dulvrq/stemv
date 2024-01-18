@@ -7,12 +7,12 @@
 round2(x, digits = 0)
 }
 \arguments{
-\item{x}{numeric.}
+\item{x}{Numeric.}
 
 \item{digits}{integer. digits to round.}
 }
 \value{
-rounded numeric.
+Rounded numeric.
 }
 \description{
 Implement usual rounding, not to even digits.

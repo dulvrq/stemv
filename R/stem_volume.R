@@ -1,11 +1,19 @@
 
+#' A list of functions for calculating stem volume
+#'
+#' A list of functions for calculating stem volume of trees based on DBH, H, and species.
+#' Main functions are [stemVolume] and [volumeName].
+#'
+#' @name stem-volume-functions
+NULL
+
 
 #' Get coefficients for calculating stem volume
 #'
-#' @param dt_stem_i  dataframe from the predefined table.
-#' @param D  numeric. DBH in cm.
+#' @param dt_stem_i  Dataframe from the predefined table.
+#' @param D  Numeric. DBH in cm.
 #' @return
-#'   list of coefficients
+#'   A list of coefficients
 #' @export
 #'
 getCoefs <- function(dt_stem_i, D){
@@ -24,9 +32,9 @@ getCoefs <- function(dt_stem_i, D){
 #'
 #' Implement usual rounding, not to even digits.
 #'
-#' @param x numeric.
+#' @param x Numeric.
 #' @param digits integer. digits to round.
-#' @return rounded numeric.
+#' @return Rounded numeric.
 #'
 round2 <- function (x, digits = 0) return(floor(x * 10^digits + 0.5) / 10^digits)
 
@@ -36,13 +44,13 @@ round2 <- function (x, digits = 0) return(floor(x * 10^digits + 0.5) / 10^digits
 #' Calculate stem volume using an equation that corresponds with the equation type.
 #' This function can handle numeric vectors with different DBH (Diameter at Breast Height) classes.
 #'
-#' @param dt_stem_i  dataframe from the predefined table.
-#' @param D  numeric/vector. DBH in cm.
-#' @param H  numeric/vector. Tree height in m.
-#' @param eq_type  numeric. equation type (currently, 1-4 is defined).
-#' @param l_c  list of parameters. If NULL, parameters will be derived from `dt_stem_i`.
+#' @param dt_stem_i  Dataframe from the predefined table.
+#' @param D  Numeric/vector. DBH in cm.
+#' @param H  Numeric/vector. Tree height in m.
+#' @param eq_type  Numeric for equation type (currently, 1-4 is defined).
+#' @param l_c  A list of parameters. If NULL, parameters will be derived from `dt_stem_i`.
 #' @return
-#'  calculated stem volume
+#'   Calculated stem volume
 #'
 #' @importFrom purrr
 #'    map_dbl map2 pmap
@@ -65,7 +73,7 @@ calcStemVolume <- function(dt_stem_i, D, H, eq_type = 1, l_c = NULL){
     # eq. 1 ---
     if(eq_type == 1){
       ## calculate stem volume ---
-      V <- 10^(l_c[["a"]] +l_c[["b"]]*log10(D) + l_c[["c"]]*log10(H))
+      V <- 10^(l_c[["a"]] + l_c[["b"]]*log10(D) + l_c[["c"]]*log10(H))
 
       # eq. 2 ---
     } else if (eq_type == 2){
@@ -106,7 +114,7 @@ calcStemVolume <- function(dt_stem_i, D, H, eq_type = 1, l_c = NULL){
     # eq. 1 ---
     if(eq_type == 1){
       V <- pmap(list(D = D, H = H, l_c = l_c),
-                function(D, H, l_c) 10^(l_c[["a"]] +l_c[["b"]]*log10(D) + l_c[["c"]]*log10(H))) |>
+                function(D, H, l_c) 10^(l_c[["a"]] + l_c[["b"]]*log10(D) + l_c[["c"]]*log10(H))) |>
         unlist()
 
       # eq. 2 ---
@@ -164,13 +172,13 @@ calcStemVolume <- function(dt_stem_i, D, H, eq_type = 1, l_c = NULL){
 #' Linear imputation between 2-diameter & volume.
 #' This can be used not only for DBH & V, but for other parameters.
 #'
-#' @param d1  numeric/vector. lower bound DBH in cm.
-#' @param v1  numeric/vector. calculated Volume that corresponds with `d1`.
-#' @param d2  numeric/vector. upper bound DBH in cm.
-#' @param v2  numeric/vector. calculated Volume that corresponds with `d2`.
-#' @param d  numeric/vector. DBH in cm.
+#' @param d1  Numeric/vector. Lower bound DBH in cm.
+#' @param v1  Numeric/vector. Calculated volume that corresponds with `d1`.
+#' @param d2  Numeric/vector. Upper bound DBH in cm.
+#' @param v2  Numeric/vector. Calculated Volume that corresponds with `d2`.
+#' @param d  Numeric/vector. DBH in cm.
 #' @return
-#'  linear interpolated stem volume or other variables
+#'   Linear interpolated stem volume or other variables
 #'
 linearImpute <- function(d1, v1, d2, v2, d){
   return(v1 + (v2 - v1) / (d2 - d1) * (d - d1))
@@ -181,14 +189,14 @@ linearImpute <- function(d1, v1, d2, v2, d){
 #' Linear imputation between 2-diameter & volume.
 #' Both for Volume calculation & linear interpolation.
 #'
-#' @param dt_stem_i dataframe from the predefined table.
-#' @param d1  numeric/vector. lower bound DBH in cm.
-#' @param d2  numeric/vector. upper bound DBH in cm.
-#' @param D  numeric/vector. DBH in cm.
-#' @param H  numeric/vector. Tree height in m.
-#' @param eq_type  numeric. equation type (currently, 1-4 is defined).
+#' @param dt_stem_i Dataframe from the predefined table.
+#' @param d1  Numeric/vector. Lower bound DBH in cm.
+#' @param d2  Numeric/vector. Upper bound DBH in cm.
+#' @param D  Numeric/vector. DBH in cm.
+#' @param H  Numeric/vector. Tree height in m.
+#' @param eq_type  Numeric for equation type (currently, 1-4 is defined).
 #' @return
-#'  calculated stem volume
+#'   Calculated stem volume
 #'
 linearImputeVolume <- function(dt_stem_i, d1, d2, D, H, eq_type){
   v1 <- calcStemVolume(dt_stem_i, d1, H, eq_type)
@@ -199,10 +207,12 @@ linearImputeVolume <- function(dt_stem_i, d1, d2, D, H, eq_type){
 
 #' Calculate stem volume based on junction adjustment, for single value.
 #'
+#' @description
 #' Calculate stem volume using an equation corresponding with the equation type.
 #' \code{calcStemVolumeAdj()} only accepts single numeric value for D & H.
-#' To handle numeric vector, use \code{calcStemVolumeMulti()}.
+#' To handle numeric vector, use [calcStemVolumeMulti()].
 #'
+#' @details
 #' This is a wrapper function to apply 3/5- points moving window average for calculating stem volume
 #' when DBH is located at the junction of equations.\cr
 #' VERY SLOW for the large amount of data.
@@ -212,12 +222,12 @@ linearImputeVolume <- function(dt_stem_i, d1, d2, D, H, eq_type){
 #' "Differences between the present stem volume tables and the values of the volume equations, and their correction"
 #' Jpn. J. For. Plann. 44:23-39.
 #'
-#' @param dt_stem_i  dataframe from the predefined table.
-#' @param D  numeric. DBH in cm.
-#' @param H  numeric. Tree height in m.
-#' @param eq_type  numeric. equation type (currently, 1-4 is defined).
-#' @param adj  one of `None`, `3w`, `5w`, `3w_o`, `5w_o`
-#' @return calculated stem volume
+#' @param dt_stem_i  Dataframe from the predefined table.
+#' @param D  Numeric. DBH in cm.
+#' @param H  Numeric. Tree height in m.
+#' @param eq_type  Numeric. equation type (currently, 1-4 is defined).
+#' @param adj  One of `None`, `3w`, `5w`, `3w_o`, `5w_o`.
+#' @return Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
 #'
@@ -340,11 +350,13 @@ calcStemVolumeAdj <- function(dt_stem_i, D, H, eq_type = 1, adj = "None"){
   return(V)
 }
 
-#' Calculate stem volume based on junction adjustment, Vector version.
+#' Calculate stem volume based on junction adjustment, vector version.
 #'
+#' @description
 #' Calculate stem volume using an equation corresponding with the equation type.\cr
 #' This function accepts numeric vectors.
 #'
+#' @details
 #' This is a wrapper function to apply 3/5- points moving window average for calculating stem volume when
 #' DBH is located at the junction of equations.
 #'
@@ -353,14 +365,14 @@ calcStemVolumeAdj <- function(dt_stem_i, D, H, eq_type = 1, adj = "None"){
 #' "Differences between the present stem volume tables and the values of the volume equations, and their correction"
 #' Jpn. J. For. Plann. 44:23-39.
 #'
-#' @param dt_stem_i  dataframe from the predefined table.
-#' @param D  numeric vector. DBH in cm. All elements should be the same DBH class in `dt_stem_i`, but it is acceptable
-#' to pass DBH with different classes (processing is a little slow).
-#' @param H  numeric vector. Tree height in m.
-#' @param eq_type  numeric. equation type (currently, 1-4 is defined).
-#' @param adj  adjusting methods for the junction. one of `None`, `3w`, `5w`, `3w_o`, `5w_o`
-#' @param list_coefs  list of parameters, which is derived from `dt_stem_i`. Usually, this is set to NULL.
-#' @return  calculated stem volume
+#' @param dt_stem_i  Dataframe from the predefined table.
+#' @param D  Numeric vector. DBH in cm. All elements should be the same DBH class in `dt_stem_i`, but it is acceptable
+#'   to pass DBH with different classes (processing is a little slow).
+#' @param H  Numeric vector. Tree height in m.
+#' @param eq_type  Numeric. equation type (currently, 1-4 is defined).
+#' @param adj  Adjusting methods for the junction. One of `None`, `3w`, `5w`, `3w_o`, `5w_o`.
+#' @param list_coefs  A list of parameters, which is derived from `dt_stem_i`. Usually, this is set to NULL.
+#' @return  Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
 #'
@@ -531,12 +543,14 @@ calcStemVolumeMulti <- function(dt_stem_i, D, H, eq_type = 1, adj = "None", list
 
 #' Calculate stem volume (single)
 #'
+#' @description
 #' Calculate stem volume using coefficients & following the methods described in Hosoda et al. (2010).
-#' This function only accepts single numeric value for D & H. To handle numeric vector, use \code{stemVolume()}.\cr
+#' This function only accepts single numeric value for D & H. To handle numeric vector, use [stemVolume()].\cr
 #' VERY SLOW if this is used for processing large amount of data.
 #'
-#' Different from `stemVolume()`, this function can turn off the 3/5 points moving average adjustment if preferred.
+#' Different from [stemVolume()], this function can turn off the 3/5 points moving average adjustment if preferred.
 #'
+#' @details
 #' For details, please see the following reference:\cr
 #' 細田ら (2010) 現行立木幹材積表と材積式による計算値との相違およびその修正方法. 森林計画学会誌 44: 23-39.
 #' (Kazuo HOSODA, Yasushi MITSUDA and Toshiro IEHARA 2010:
@@ -555,13 +569,13 @@ calcStemVolumeMulti <- function(dt_stem_i, D, H, eq_type = 1, adj = "None", list
 #'   (2024/01/14)関数を定義して修正したが、内部的な数値のズレで合わない場合が存在する(e.g. H=39mかつD>=81cm)
 #'
 #' @param Name  Japanese character for identifying the calculation methods (e.g., `東京スギ`).
-#'  This is expected from `volumeName()`.
-#' @param D  numeric. DBH in cm.
-#' @param H  numeric. Tree height in m.
-#' @param list_data  list of data for coefficients. This is expected from `getStemCoefficients()`.
-#' If NULL, internally call `getStemCoefficients()`.
-#' @param off_adj  logical. If TRUE, all moving average adjustment for junctions become inactive.
-#' @return calculated stem volume
+#'   This is expected from [volumeName()].
+#' @param D  Numeric. DBH in cm.
+#' @param H  Numeric. Tree height in m.
+#' @param list_data  A list of data for coefficients. This is expected from [getStemCoefficients()].
+#'   If NULL, internally call [getStemCoefficients()].
+#' @param off_adj  Logical. If TRUE, all moving average adjustment for junctions become inactive.
+#' @return Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
 #'
@@ -829,9 +843,11 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
 
 #' Calculate stem volume
 #'
+#' @description
 #' Calculate stem volume using coefficients & following the methods described in Hosoda et al. (2010).
 #' This function accepts numeric vectors for D & H.
 #'
+#' @details
 #' For details, please see the following reference:\cr
 #' 細田ら (2010) 現行立木幹材積表と材積式による計算値との相違およびその修正方法. 森林計画学会誌 44: 23-39.\cr
 #' (Kazuo HOSODA, Yasushi MITSUDA and Toshiro IEHARA 2010:
@@ -850,10 +866,10 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
 #'   (2024/01/14)関数を定義して修正したが、内部的な数値のズレで合わない場合が存在する(e.g. H=39mかつD>=81cm)
 #'
 #' @param Name  Japanese character for identifying the calculation methods (e.g., `東京スギ`).
-#'  This is expected from `volumeName()`.
-#' @param D  numeric. DBH in cm.
-#' @param H  numeric. Tree height in m.
-#' @return  calculated stem volume
+#'   This is expected from [volumeName()].
+#' @param D  Numeric. DBH in cm.
+#' @param H  Numeric. Tree height in m.
+#' @return  Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
 #' @importFrom dplyr %>% filter mutate group_by summarize arrange
@@ -1129,23 +1145,23 @@ stemVolume <- function(Name, D, H){
 
 #' Get Region name (single)
 #'
-#' Get Region name that is used in `stemVolume()`.
-#' Only accept single character for Region & Spp. To handle vector, use a wrapper function \code{volumeName()}.
+#' Get Region name that is used in [stemVolume()].
+#' Only accept single character for Region & Spp. To handle vector, use a wrapper function [volumeName()].
 #'
 #' Species & Region names are defined following Hosoda et al. (2010) Jpn. J. For. Plann. 44:23-39.
 #'  (https://doi.org/10.20659/jjfp.44.2_23) and
 #'  "幹材積計算プログラム" developed by FFPRI.
 #' (https://www.ffpri.affrc.go.jp/database/stemvolume/index.html)
 #'
-#' @param Region  character. Region/Prefecture name that are listed in `RS`.
-#' Please see the original article by Hosoda et al. (2010) and description in the above program.
-#' @param Spp  character. Species name in Japanese. If it does not match any species in the lists, then `広葉樹` is returned.
-#' Please see the original article by Hosoda et al. (2010) and description in the above program.
-#' @param RS  a list of parameters, which is generated by `getRegionName()`.
-#' list names should be strictly the same as one generated by `getRegionName()` to derive the correct parameters.
-#' @param name_invalid  character. determine the behavior when invalid region name is provided for `Region`.
-#' If NULL, cause error with message. If character string provided, return that string for invalid ones.
-#' @return  Name for identifying and calculating stem volume in `stemVolume()`
+#' @param Region  Character. Region/Prefecture name that are listed in `RS`.
+#'   Please see the original article by Hosoda et al. (2010) and description in the above program.
+#' @param Spp  Character. Species name in Japanese. If it does not match any species in the lists, then `広葉樹` is returned.
+#'   Please see the original article by Hosoda et al. (2010) and description in the above program.
+#' @param RS  A list of parameters, which is generated by [getRegionName()].
+#'   List names should be strictly the same as one generated by [getRegionName()] to derive the correct parameters.
+#' @param name_invalid  Character to determine the behavior when invalid region name is provided for `Region`.
+#'   If NULL, cause error with message. If character string provided, return that string for invalid ones.
+#' @return  Name for identifying and calculating stem volume in [stemVolume()]
 #'
 #' @importFrom dplyr %>% filter mutate group_by summarize
 #' @importFrom stringr str_replace str_detect
@@ -1493,7 +1509,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
 
 #' Get Region name
 #'
-#' Wrapper function to get Region name that is used in `stemVolume()` (e.g., "東京スギ").
+#' Wrapper function to get Region name that is used in [stemVolume()] (e.g., "東京スギ").
 #' This is faster when large amount of data are passed and those are duplicated.
 #'
 #' Species & Region names are defined following Hosoda et al. (2010) Jpn. J. For. Plann. 44:23-39.
@@ -1501,13 +1517,14 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
 #'  "幹材積計算プログラム" developed by FFPRI.
 #' (https://www.ffpri.affrc.go.jp/database/stemvolume/index.html)
 #'
-#' @param Region  character vector. Region/Prefecture name that are listed in `RS`.
-#' Please see the original article by Hosoda et al. (2010) and description in the above program.
-#' @param Spp  character vector. Species name in Japanese. If it does not match any species in the lists, then `広葉樹` is returned.
-#' Please see the original article by Hosoda et al. (2010) and description in the above program.
-#' @param RS  a list of parameters, which is generated by `getRegionName()`.
-#' list names should be strictly the same as one generated by `getRegionName()` to derive the correct parameters.
-#' @return Name for identifying and calculating stem volume in `stemVolume()`
+#' @param Region  Character vector. Region/Prefecture name that are listed in `RS`.
+#'   Please see the original article by Hosoda et al. (2010) and description in the above program.
+#' @param Spp  Character vector. Species name in Japanese.
+#'   If it does not match any species in the lists, then `広葉樹` is returned.
+#'   Please see the original article by Hosoda et al. (2010) and description in the above program.
+#' @param RS  A list of parameters, which is generated by [getRegionName()].
+#'   list names should be strictly the same as one generated by [getRegionName()] to derive the correct parameters.
+#' @return Name for identifying and calculating stem volume in [stemVolume()]
 #'
 #' @importFrom purrr pmap
 #' @importFrom dplyr %>% filter mutate group_by summarize
@@ -1540,9 +1557,9 @@ volumeName <- function(Region, Spp, RS = NULL){
 
 
 
-#' get region & name as list
+#' Get region & name as list
 #'
-#' @return a list of parameters for \code{volumeName}
+#' @return A list of parameters for [volumeName()]
 #'
 getRegionName <- function(){
   # list of species
@@ -1677,14 +1694,12 @@ getRegionName <- function(){
 
 
 
-
-
 #' Generate a list of dataframe for parameters
 #'
 #' Generate dataframe of parameters for equations 1) stem volume, 2) BH form factor, and
 #' 3) height form based volume calculation.
 #'
-#' @return a list of dataframe for \code{stemVolume}
+#' @return A list of dataframe for [stemVolume()]
 #'
 #' @importFrom dplyr %>% filter mutate
 #' @export

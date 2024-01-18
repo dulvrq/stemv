@@ -7,23 +7,23 @@
 calcStemVolumeAdj(dt_stem_i, D, H, eq_type = 1, adj = "None")
 }
 \arguments{
-\item{dt_stem_i}{dataframe from the predefined table.}
+\item{dt_stem_i}{Dataframe from the predefined table.}
 
-\item{D}{numeric. DBH in cm.}
+\item{D}{Numeric. DBH in cm.}
 
-\item{H}{numeric. Tree height in m.}
+\item{H}{Numeric. Tree height in m.}
 
-\item{eq_type}{numeric. equation type (currently, 1-4 is defined).}
+\item{eq_type}{Numeric. equation type (currently, 1-4 is defined).}
 
-\item{adj}{one of \code{None}, \verb{3w}, \verb{5w}, \verb{3w_o}, \verb{5w_o}}
+\item{adj}{One of \code{None}, \verb{3w}, \verb{5w}, \verb{3w_o}, \verb{5w_o}.}
 }
 \value{
-calculated stem volume
+Calculated stem volume
 }
 \description{
 Calculate stem volume using an equation corresponding with the equation type.
 \code{calcStemVolumeAdj()} only accepts single numeric value for D & H.
-To handle numeric vector, use \code{calcStemVolumeMulti()}.
+To handle numeric vector, use \link{calcStemVolumeMulti}.
 }
 \details{
 This is a wrapper function to apply 3/5- points moving window average for calculating stem volume

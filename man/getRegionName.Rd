@@ -2,7 +2,7 @@
 % Please edit documentation in R/stem_volume.R
 \name{getRegionName}
 \alias{getRegionName}
-\title{get region & name as list}
+\title{Get region & name as list}
 \usage{
 getRegionName()
 }
@@ -10,5 +10,5 @@ getRegionName()
 a list of parameters for \code{volumeName}
 }
 \description{
-get region & name as list
+Get region & name as list
 }

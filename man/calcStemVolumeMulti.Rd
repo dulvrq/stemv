@@ -2,7 +2,7 @@
 % Please edit documentation in R/stem_volume.R
 \name{calcStemVolumeMulti}
 \alias{calcStemVolumeMulti}
-\title{Calculate stem volume based on junction adjustment, Vector version.}
+\title{Calculate stem volume based on junction adjustment, vector version.}
 \usage{
 calcStemVolumeMulti(
   dt_stem_i,
@@ -14,21 +14,21 @@ calcStemVolumeMulti(
 )
 }
 \arguments{
-\item{dt_stem_i}{dataframe from the predefined table.}
+\item{dt_stem_i}{Dataframe from the predefined table.}
 
-\item{D}{numeric vector. DBH in cm. All elements should be the same DBH class in \code{dt_stem_i}, but it is acceptable
+\item{D}{Numeric vector. DBH in cm. All elements should be the same DBH class in \code{dt_stem_i}, but it is acceptable
 to pass DBH with different classes (processing is a little slow).}
 
-\item{H}{numeric vector. Tree height in m.}
+\item{H}{Numeric vector. Tree height in m.}
 
-\item{eq_type}{numeric. equation type (currently, 1-4 is defined).}
+\item{eq_type}{Numeric. equation type (currently, 1-4 is defined).}
 
-\item{adj}{adjusting methods for the junction. one of \code{None}, \verb{3w}, \verb{5w}, \verb{3w_o}, \verb{5w_o}}
+\item{adj}{Adjusting methods for the junction. One of \code{None}, \verb{3w}, \verb{5w}, \verb{3w_o}, \verb{5w_o}.}
 
-\item{list_coefs}{list of parameters, which is derived from \code{dt_stem_i}. Usually, this is set to NULL.}
+\item{list_coefs}{A list of parameters, which is derived from \code{dt_stem_i}. Usually, this is set to NULL.}
 }
 \value{
-calculated stem volume
+Calculated stem volume
 }
 \description{
 Calculate stem volume using an equation corresponding with the equation type.\cr

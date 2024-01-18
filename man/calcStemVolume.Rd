@@ -7,18 +7,18 @@
 calcStemVolume(dt_stem_i, D, H, eq_type = 1, l_c = NULL)
 }
 \arguments{
-\item{dt_stem_i}{dataframe from the predefined table.}
+\item{dt_stem_i}{Dataframe from the predefined table.}
 
-\item{D}{numeric/vector. DBH in cm.}
+\item{D}{Numeric/vector. DBH in cm.}
 
-\item{H}{numeric/vector. Tree height in m.}
+\item{H}{Numeric/vector. Tree height in m.}
 
-\item{eq_type}{numeric. equation type (currently, 1-4 is defined).}
+\item{eq_type}{Numeric for equation type (currently, 1-4 is defined).}
 
-\item{l_c}{list of parameters. If NULL, parameters will be derived from \code{dt_stem_i}.}
+\item{l_c}{A list of parameters. If NULL, parameters will be derived from \code{dt_stem_i}.}
 }
 \value{
-calculated stem volume
+Calculated stem volume
 }
 \description{
 Calculate stem volume using an equation that corresponds with the equation type.

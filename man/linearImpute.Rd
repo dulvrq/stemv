@@ -7,18 +7,18 @@
 linearImpute(d1, v1, d2, v2, d)
 }
 \arguments{
-\item{d1}{numeric/vector. lower bound DBH in cm.}
+\item{d1}{Numeric/vector. Lower bound DBH in cm.}
 
-\item{v1}{numeric/vector. calculated Volume that corresponds with \code{d1}.}
+\item{v1}{Numeric/vector. Calculated volume that corresponds with \code{d1}.}
 
-\item{d2}{numeric/vector. upper bound DBH in cm.}
+\item{d2}{Numeric/vector. Upper bound DBH in cm.}
 
-\item{v2}{numeric/vector. calculated Volume that corresponds with \code{d2}.}
+\item{v2}{Numeric/vector. Calculated Volume that corresponds with \code{d2}.}
 
-\item{d}{numeric/vector. DBH in cm.}
+\item{d}{Numeric/vector. DBH in cm.}
 }
 \value{
-linear interpolated stem volume or other variables
+Linear interpolated stem volume or other variables
 }
 \description{
 Linear imputation between 2-diameter & volume.

@@ -7,20 +7,20 @@
 linearImputeVolume(dt_stem_i, d1, d2, D, H, eq_type)
 }
 \arguments{
-\item{dt_stem_i}{dataframe from the predefined table.}
+\item{dt_stem_i}{Dataframe from the predefined table.}
 
-\item{d1}{numeric/vector. lower bound DBH in cm.}
+\item{d1}{Numeric/vector. Lower bound DBH in cm.}
 
-\item{d2}{numeric/vector. upper bound DBH in cm.}
+\item{d2}{Numeric/vector. Upper bound DBH in cm.}
 
-\item{D}{numeric/vector. DBH in cm.}
+\item{D}{Numeric/vector. DBH in cm.}
 
-\item{H}{numeric/vector. Tree height in m.}
+\item{H}{Numeric/vector. Tree height in m.}
 
-\item{eq_type}{numeric. equation type (currently, 1-4 is defined).}
+\item{eq_type}{Numeric for equation type (currently, 1-4 is defined).}
 }
 \value{
-calculated stem volume
+Calculated stem volume
 }
 \description{
 Linear imputation between 2-diameter & volume.

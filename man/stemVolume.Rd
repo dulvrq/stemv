@@ -8,14 +8,14 @@ stemVolume(Name, D, H)
 }
 \arguments{
 \item{Name}{Japanese character for identifying the calculation methods (e.g., \code{東京スギ}).
-This is expected from \code{volumeName()}.}
+This is expected from \link{volumeName}.}
 
-\item{D}{numeric. DBH in cm.}
+\item{D}{Numeric. DBH in cm.}
 
-\item{H}{numeric. Tree height in m.}
+\item{H}{Numeric. Tree height in m.}
 }
 \value{
-calculated stem volume
+Calculated stem volume
 }
 \description{
 Calculate stem volume using coefficients & following the methods described in Hosoda et al. (2010).

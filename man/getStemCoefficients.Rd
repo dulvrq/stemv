@@ -7,7 +7,7 @@
 getStemCoefficients()
 }
 \value{
-a list of dataframe for \code{stemVolume}
+A list of dataframe for \link{stemVolume}
 }
 \description{
 Generate dataframe of parameters for equations 1) stem volume, 2) BH form factor, and

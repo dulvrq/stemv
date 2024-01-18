@@ -7,12 +7,12 @@
 getCoefs(dt_stem_i, D)
 }
 \arguments{
-\item{dt_stem_i}{dataframe from the predefined table.}
+\item{dt_stem_i}{Dataframe from the predefined table.}
 
-\item{D}{numeric. DBH in cm.}
+\item{D}{Numeric. DBH in cm.}
 }
 \value{
-list of coefficients
+A list of coefficients
 }
 \description{
 Get coefficients for calculating stem volume
