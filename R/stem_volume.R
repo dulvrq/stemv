@@ -560,13 +560,11 @@ calcStemVolumeMulti <- function(dt_stem_i, D, H, eq_type = 1, adj = "None", list
 #' There are several differences compared with the description in the original article and
 #' computational program developed based on the same article as follows:
 #'
-#' - 3点移動平均、5点移動平均が複数適用される場合を反映(2024/01/11)
-#' - 一部の係数の有効数字で係数の時点でずれが発生している(函館エゾマツ、東京広葉樹の62cm、長野カラマツなど)
-#' - 形状高法は係数を直線補間してるが、範囲外も上限/下限で線形補間している。
-#' - マクロにおける「札幌トドマツ」、「高知天然スギ」、「青森アカマツ」の修正は反映していない。
-#' - 「青森広葉樹」、「高知広葉樹」の5点移動平均の当てはめ範囲がマクロ関数と異なる。
-#' - 「北海道針葉樹」の小数第3位への四捨五入で、round()が偶数丸めこみ(五捨五入)を行うため誤差が生じる場合がある。
-#'   (2024/01/14)関数を定義して修正したが、内部的な数値のズレで合わない場合が存在する(e.g. H=39mかつD>=81cm)
+#' - The significant digits for the parameters of several equations are different
+#'  (e.g., `函館エゾマツ`, `東京広葉樹`, `長野カラマツ`).
+#' - The additional revisions on `札幌トドマツ`,  `高知天然スギ`, and `青森アカマツ` are not reflected.
+#' - The range for 5 points moving average adjustment is different for `青森広葉樹` and `高知広葉樹`.
+#' - The error in floating-point numbers can cause the differences in rounding calculation for `北海道針葉樹`.
 #'
 #' @param Name  Japanese character for identifying the calculation methods (e.g., `東京スギ`).
 #'   This is expected from [volumeName()].
@@ -575,6 +573,7 @@ calcStemVolumeMulti <- function(dt_stem_i, D, H, eq_type = 1, adj = "None", list
 #' @param list_data  A list of data for coefficients. This is expected from [getStemCoefficients()].
 #'   If NULL, internally call [getStemCoefficients()].
 #' @param off_adj  Logical. If TRUE, all moving average adjustment for junctions become inactive.
+#' @param ... Additional arguments. `list_data` and `adjust_to_excel` are supported.
 #' @return Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
@@ -584,7 +583,7 @@ calcStemVolumeMulti <- function(dt_stem_i, D, H, eq_type = 1, adj = "None", list
 #' @export
 #'
 
-stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
+stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...){
   ## adjustment to D & H. if either is NA, cause error ---
   if(D < 0) D <- 0
   if(H < 0) H <- 0
@@ -774,6 +773,154 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
       } else {
         V <- V
       }
+
+      ## adjustment to those in the calculation program (Excel ver)
+      ## this is a tentative code. Require "adjust_to_excel" in ellipsis.
+      if("adjust_to_excel" %in% names(list(...)) && list(...)["adjust_to_excel"] == TRUE){
+        ### 1) Sapporo Todomatsu
+        if(Name == "札幌トドマツ" & D >= 90 & D < 92){
+          v1 <- calcStemVolumeAdj(dt_stem_i, 90, H, eq_type = 1, adj = "3w")
+          v2 <- 0.247459 * H + 0.2424
+          V <- linearImpute(90, v1, 92, v2, D)
+        }
+        if(Name == "札幌トドマツ" & any(D >= 92 & D < 94)){
+          wch_replace <- which(D >= 92 & D < 94)
+          v1 <- 0.247459 * H + 0.2424
+          v2 <- 0.259188 * H + 0.2648
+          V  <- linearImpute(92, v1, 94, v2, D)
+        }
+        if(Name == "札幌トドマツ" & any(D >= 94 & D < 96)){
+          wch_replace <- which(D >= 94 & D < 96)
+          v1 <- 0.259188 * H + 0.2648
+          v2 <- 0.274247 * H + 0.2993
+          V  <- linearImpute(94, v1, 96, v2, D)
+        }
+        if(Name == "札幌トドマツ" & any(D >= 96 & D < 98)){
+          wch_replace <- which(D >= 96 & D < 98)
+          v1 <- 0.274247 * H + 0.2993
+          v2 <- 0.290558 * H + 0.3324
+          V  <- linearImpute(96, v1, 98, v2, D)
+        }
+        if(Name == "札幌トドマツ" & any(D >= 98 & D < 100)){
+          wch_replace <- which(D >= 98 & D < 100)
+          v1 <- 0.290558 * H + 0.3324
+          v2 <- calcStemVolumeAdj(dt_stem_s, 100, H, eq_type = 1, adj = "5w") # use revised coef
+          V  <- linearImpute(98, v1, 100, v2, D)
+        }
+        ### 2) Kochi Tennen-sugi
+        # if(Name == "高知天然スギ" & any(D >= 94 & D < 96 & H < 21.5)){ # omitted
+        #   wch_replace <- which(D >= 94 & D < 96 & H < 21.5)
+        #   v1 <- calcStemVolumeAdj(dt_stem_i, 94, H, eq_type = 1, adj = "3w")
+        #   v2 <- 0.253714 * H + 0.1063
+        #   V  <- linearImpute(94, v1, 96, v2, D)
+        # }
+        if(Name == "高知天然スギ" & any(D >= 96 & D < 98 & H < 21.5)){
+          wch_replace <- which(D >= 96 & D < 98 & H < 21.5)
+          v1 <- 0.253714 * H + 0.1063
+          v2 <- calcStemVolumeAdj(dt_stem_i, 98, H, eq_type = 1, adj = "5w")
+          V  <- linearImpute(96, v1, 98, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 96 & D < 98 & H >= 29.5)){
+          wch_replace <- which(D >= 96 & D < 98 & H >= 29.5)
+          v1 <- calcStemVolumeAdj(dt_stem_i, 96, H, eq_type = 1, adj = "5w")
+          v2 <- 0.249273 * H + 0.4434
+          V  <- linearImpute(96, v1, 98, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 98 & D < 100 & H >= 29.5)){
+          wch_replace <- which(D >= 98 & D < 100 & H >= 29.5)
+          v1 <- 0.249273 * H + 0.4434
+          v2 <- 0.269714 * H + 0.1319
+          V  <- linearImpute(98, v1, 100, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 100 & D < 102 & H >= 29.5)){
+          wch_replace <- which(D >= 100 & D < 102 & H >= 29.5)
+          v1 <- 0.269714 * H + 0.1319
+          v2 <- calcStemVolumeAdj(dt_stem_i, 102, H, eq_type = 1, adj = "5w")
+          V  <- linearImpute(100, v1, 102, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 102 & D < 104)){
+          wch_replace <- which(D >= 102 & D < 104)
+          v1 <- calcStemVolumeAdj(dt_stem_i, 102, H, eq_type = 1, adj = "5w")
+          v2 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
+          V  <- linearImpute(102, v1, 104, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 104 & D < 106 & H < 22.5)){
+          wch_replace <- which(D >= 104 & D < 106 & H < 22.5)
+          v1 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
+          v2 <- 0.314 * H - 0.467
+          V  <- linearImpute(104, v1, 106, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 104 & D < 106 & H >= 22.5 & H < 39.5)){
+          wch_replace <- which(D >= 104 & D < 106 & H >= 22.5 & H < 39.5)
+          v1 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
+          v2 <- calcStemVolumeAdj(dt_stem_i, 106, H, eq_type = 1, adj = "5w")
+          V  <- linearImpute(104, v1, 106, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 104 & D < 106 & H >= 39.5)){
+          wch_replace <- which(D >= 104 & D < 106 & H >= 39.5)
+          v1 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
+          v2 <- 0.354 * H - 1.7846
+          V  <- linearImpute(104, v1, 106, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 106 & D < 108 & H < 22.5)){
+          wch_replace <- which(D >= 106 & D < 108 & H < 22.5)
+          v1 <- 0.314 * H - 0.467
+          v2 <- 0.327 * H - 0.636
+          V  <- linearImpute(106, v1, 108, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 106 & D < 108 &  H >= 22.5 & H < 39.5)){
+          wch_replace <- which(D >= 106 & D < 108 &  H >= 22.5 & H < 39.5)
+          v1 <- calcStemVolumeAdj(dt_stem_i, 106, H, eq_type = 1, adj = "5w")
+          v2 <- calcStemVolumeAdj(dt_stem_i, 108, H, eq_type = 1, adj = "5w")
+          V  <- linearImpute(106, v1, 108, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 106 & D < 108 & H >= 39.5)){
+          wch_replace <- which(D >= 106 & D < 108 & H >= 39.5)
+          v1 <- 0.354 * H - 1.7846
+          v2 <- calcStemVolumeAdj(dt_stem_i, 108, H, eq_type = 1, adj = "5w")
+          V  <- linearImpute(106, v1, 108, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 108 & D < 110 & H < 22.5)){
+          wch_replace <- which(D >= 108 & D < 110 & H < 22.5)
+          v1 <- 0.327 * H - 0.636
+          v2 <- calcStemVolumeAdj(dt_stem_i, 110, H, eq_type = 1, adj = "5w")
+          V  <- linearImpute(108, v1, 110, v2, D)
+        }
+        if(Name == "高知天然スギ" & any(D >= 108 & D < 110 & H >= 22.5)){
+          wch_replace <- which(D >= 108 & D < 110 & H >= 22.5)
+          v1 <- calcStemVolumeAdj(dt_stem_i, 108, H, eq_type = 1, adj = "5w")
+          v2 <- calcStemVolumeAdj(dt_stem_i, 110, H, eq_type = 1, adj = "5w")
+          V  <- linearImpute(108, v1, 110, v2, D)
+        }
+        ### 3) Aomori Akamatsu
+        if(Name == "青森アカマツ" & any(D > 38 & D <= 46)){
+          wch_replace <- which(D > 38 & D <= 46)
+          v1 <- calcStemVolumeAdj(dt_stem_i, 38, H, eq_type = 1, adj = "None")
+          v2 <- calcStemVolumeAdj(dt_stem_i, 46, H, eq_type = 1, adj = "3w")
+          V  <- linearImpute(38, v1, 46, v2, D)
+        }
+        if(Name == "青森アカマツ" & any(D > 46 & D < 56)){
+          wch_replace <- which(D > 46 & D < 56)
+          v1 <- calcStemVolumeAdj(dt_stem_i, 46, H, eq_type = 1, adj = "3w")
+          v2 <- calcStemVolumeAdj(dt_stem_i, 56, H, eq_type = 1, adj = "None")
+          V  <- linearImpute(46, v1, 56, v2, D)
+        }
+        ### 4) Aomori Koyoju, Kochi Koyoju
+        if(Name == "青森広葉樹"){
+          if(D < 68){
+            V <- calcStemVolumeAdj(dt_stem_i, D, H, eq_type = 1, adj = "None")
+          } else {
+            V <- calcStemVolumeAdj(dt_stem_i, D, H, eq_type = 1, adj = "5w")
+          }
+        }
+        if(Name == "高知広葉樹"){
+          if(D < 58){
+            V <- calcStemVolumeAdj(dt_stem_i, D, H, eq_type = 2, adj = "3w")
+          } else {
+            V <- calcStemVolumeAdj(dt_stem_i, D, H, eq_type = 2, adj = "5w")
+          }
+        }
+      }
     }
 
 
@@ -802,8 +949,8 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
       f_h <- 0.435719 + 0.515867/H + 2.481278/H^2
       f <- (round2(f_d, 3) + round2(f_h, 3))/2
     } else if(Name == "北海道針葉樹") {
-      f_d <- 0.5 - 0.0008*D + 0.421*exp(-0.12*D)
-      f_h <- 0.61 - 0.0055*H + 5.48*exp(-1.025*H)
+      f_d <- 0.5 - 0.0008*D + 0.421*exp(-0.12*D) + 10^-10 # to avoid floating-point error
+      f_h <- 0.61 - 0.0055*H + 5.48*exp(-1.025*H) + 10^-10 # to avoid floating-point error
       f <- (round2(f_d, 3) + round2(f_h, 3))/2
     }
     ## calculate stem volume ---
@@ -849,7 +996,7 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
 #'
 #' @details
 #' For details, please see the following reference:\cr
-#' 細田ら (2010) 現行立木幹材積表と材積式による計算値との相違およびその修正方法. 森林計画学会誌 44: 23-39.\cr
+#' 細田ら (2010) 現行立木幹材積表と材積式による計算値との相違およびその修正方法. 森林計画学会誌 44: 23-39.
 #' (Kazuo HOSODA, Yasushi MITSUDA and Toshiro IEHARA 2010:
 #' "Differences between the present stem volume tables and the values of the volume equations, and their correction"
 #' Jpn. J. For. Plann. 44:23-39.)
@@ -857,18 +1004,17 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
 #' There are several differences compared with the description in the original article and
 #' computational program developed based on the same article as follows:
 #'
-#' - 3点移動平均、5点移動平均が複数適用される場合を反映(2024/01/11)
-#' - 一部の係数の有効数字で係数の時点でずれが発生している(函館エゾマツ、東京広葉樹の62cm、長野カラマツなど)
-#' - 形状高法は係数を直線補間してるが、範囲外も上限/下限で線形補間している。
-#' - マクロにおける「札幌トドマツ」、「高知天然スギ」、「青森アカマツ」の修正は反映していない。
-#' - 「青森広葉樹」、「高知広葉樹」の5点移動平均の当てはめ範囲がマクロ関数と異なる。
-#' - 「北海道針葉樹」の小数第3位への四捨五入で、round()が偶数丸めこみ(五捨五入)を行うため誤差が生じる場合がある。
-#'   (2024/01/14)関数を定義して修正したが、内部的な数値のズレで合わない場合が存在する(e.g. H=39mかつD>=81cm)
+#' - The significant digits for the parameters of several equations are different
+#'  (e.g., `函館エゾマツ`, `東京広葉樹`, `長野カラマツ`).
+#' - The additional revisions on `札幌トドマツ`,  `高知天然スギ`, and `青森アカマツ` are not reflected.
+#' - The range for 5 points moving average adjustment is different for `青森広葉樹` and `高知広葉樹`.
+#' - The error in floating-point numbers can cause the differences in rounding calculation for `北海道針葉樹`.
 #'
 #' @param Name  Japanese character for identifying the calculation methods (e.g., `東京スギ`).
 #'   This is expected from [volumeName()].
 #' @param D  Numeric. DBH in cm.
 #' @param H  Numeric. Tree height in m.
+#' @param ... Additional arguments. `list_data` and `adjust_to_excel` are supported.
 #' @return  Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
@@ -877,7 +1023,7 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE){
 #' @importFrom utils tail
 #' @export
 #'
-stemVolume <- function(Name, D, H){
+stemVolume <- function(Name, D, H, ...){
   ## check the length ---
   if(length(Name) == 1 & length(D) > 1) Name <- rep(Name, length(D)) # in case single Name is provided.
   if(!all(length(Name) == c(length(D), length(H)))) stop("Different data length.")
@@ -887,7 +1033,13 @@ stemVolume <- function(Name, D, H){
   V <- rep(NA, length(D))
 
   ## data for coefficients ---
-  list_data <- getStemCoefficients()
+  ### use external coefficients if provided in ellipsis
+  ### otherwise call the function to get coefficient
+  if("list_data" %in% names(list(...))){
+    list_data <- list(...)[["list_data"]]
+  } else {
+    list_data <- getStemCoefficients()
+  }
   dt_stem <- list_data$stem
   dt_ff   <- list_data$ff
   dt_hf   <- list_data$hf
@@ -1062,6 +1214,155 @@ stemVolume <- function(Name, D, H){
         V_i[wch_replace]  <- linearImpute(40, v1, 50, v2, D_i[wch_replace])
       }
 
+      ## adjustment to those in the calculation program (Excel ver)
+      ## this is a tentative code. Require "adjust_to_excel" in ellipsis.
+      if("adjust_to_excel" %in% names(list(...)) && list(...)["adjust_to_excel"] == TRUE){
+        ### 1) Sapporo Todomatsu
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 90 & D_i < 92)){
+          wch_replace <- which(D_i >= 90 & D_i < 92)
+          v1 <- calcStemVolumeMulti(dt_stem_i, 90, H_i[wch_replace], eq_type = 1, adj = "3w")
+          v2 <- 0.247459 * H_i[wch_replace] + 0.2424
+          V_i[wch_replace]  <- linearImpute(90, v1, 92, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 92 & D_i < 94)){
+          wch_replace <- which(D_i >= 92 & D_i < 94)
+          v1 <- 0.247459 * H_i[wch_replace] + 0.2424
+          v2 <- 0.259188 * H_i[wch_replace] + 0.2648
+          V_i[wch_replace]  <- linearImpute(92, v1, 94, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 94 & D_i < 96)){
+          wch_replace <- which(D_i >= 94 & D_i < 96)
+          v1 <- 0.259188 * H_i[wch_replace] + 0.2648
+          v2 <- 0.274247 * H_i[wch_replace] + 0.2993
+          V_i[wch_replace]  <- linearImpute(94, v1, 96, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 96 & D_i < 98)){
+          wch_replace <- which(D_i >= 96 & D_i < 98)
+          v1 <- 0.274247 * H_i[wch_replace] + 0.2993
+          v2 <- 0.290558 * H_i[wch_replace] + 0.3324
+          V_i[wch_replace]  <- linearImpute(96, v1, 98, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 98 & D_i < 100)){
+          wch_replace <- which(D_i >= 98 & D_i < 100)
+          v1 <- 0.290558 * H_i[wch_replace] + 0.3324
+          v2 <- calcStemVolumeMulti(dt_stem_s, 100, H_i[wch_replace], eq_type = 1, adj = "5w") # use revised coef
+          V_i[wch_replace]  <- linearImpute(98, v1, 100, v2, D_i[wch_replace])
+        }
+        ### 2) Kochi Tennen-sugi
+        # if(ls_Name[i] == "高知天然スギ" & any(D_i >= 94 & D_i < 96 & H_i < 21.5)){ # omitted
+        #   wch_replace <- which(D_i >= 94 & D_i < 96 & H_i < 21.5)
+        #   v1 <- calcStemVolumeMulti(dt_stem_i, 94, H_i[wch_replace], eq_type = 1, adj = "3w")
+        #   v2 <- 0.253714 * H_i[wch_replace] + 0.1063
+        #   V_i[wch_replace]  <- linearImpute(94, v1, 96, v2, D_i[wch_replace])
+        # }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 96 & D_i < 98 & H_i < 21.5)){
+          wch_replace <- which(D_i >= 96 & D_i < 98 & H_i < 21.5)
+          v1 <- 0.253714 * H_i[wch_replace] + 0.1063
+          v2 <- calcStemVolumeMulti(dt_stem_i, 98, H_i[wch_replace], eq_type = 1, adj = "5w")
+          V_i[wch_replace]  <- linearImpute(96, v1, 98, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 96 & D_i < 98 & H_i >= 29.5)){
+          wch_replace <- which(D_i >= 96 & D_i < 98 & H_i >= 29.5)
+          v1 <- calcStemVolumeMulti(dt_stem_i, 96, H_i[wch_replace], eq_type = 1, adj = "5w")
+          v2 <- 0.249273 * H_i[wch_replace] + 0.4434
+          V_i[wch_replace]  <- linearImpute(96, v1, 98, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 98 & D_i < 100 & H_i >= 29.5)){
+          wch_replace <- which(D_i >= 98 & D_i < 100 & H_i >= 29.5)
+          v1 <- 0.249273 * H_i[wch_replace] + 0.4434
+          v2 <- 0.269714 * H_i[wch_replace] + 0.1319
+          V_i[wch_replace]  <- linearImpute(98, v1, 100, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 100 & D_i < 102 & H_i >= 29.5)){
+          wch_replace <- which(D_i >= 100 & D_i < 102 & H_i >= 29.5)
+          v1 <- 0.269714 * H_i[wch_replace] + 0.1319
+          v2 <- calcStemVolumeMulti(dt_stem_i, 102, H_i[wch_replace], eq_type = 1, adj = "5w")
+          V_i[wch_replace]  <- linearImpute(100, v1, 102, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 102 & D_i < 104)){
+          wch_replace <- which(D_i >= 102 & D_i < 104)
+          v1 <- calcStemVolumeMulti(dt_stem_i, 102, H_i[wch_replace], eq_type = 1, adj = "5w")
+          v2 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
+          V_i[wch_replace]  <- linearImpute(102, v1, 104, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i < 22.5)){
+          wch_replace <- which(D_i >= 104 & D_i < 106 & H_i < 22.5)
+          v1 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
+          v2 <- 0.314 * H_i[wch_replace] - 0.467
+          V_i[wch_replace]  <- linearImpute(104, v1, 106, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i >= 22.5 & H_i < 39.5)){
+          wch_replace <- which(D_i >= 104 & D_i < 106 & H_i >= 22.5 & H_i < 39.5)
+          v1 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
+          v2 <- calcStemVolumeMulti(dt_stem_i, 106, H_i[wch_replace], eq_type = 1, adj = "5w")
+          V_i[wch_replace]  <- linearImpute(104, v1, 106, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i >= 39.5)){
+          wch_replace <- which(D_i >= 104 & D_i < 106 & H_i >= 39.5)
+          v1 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
+          v2 <- 0.354 * H_i[wch_replace] - 1.7846
+          V_i[wch_replace]  <- linearImpute(104, v1, 106, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 & H_i < 22.5)){
+          wch_replace <- which(D_i >= 106 & D_i < 108 & H_i < 22.5)
+          v1 <- 0.314 * H_i[wch_replace] - 0.467
+          v2 <- 0.327 * H_i[wch_replace] - 0.636
+          V_i[wch_replace]  <- linearImpute(106, v1, 108, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 &  H_i >= 22.5 & H_i < 39.5)){
+          wch_replace <- which(D_i >= 106 & D_i < 108 &  H_i >= 22.5 & H_i < 39.5)
+          v1 <- calcStemVolumeMulti(dt_stem_i, 106, H_i[wch_replace], eq_type = 1, adj = "5w")
+          v2 <- calcStemVolumeMulti(dt_stem_i, 108, H_i[wch_replace], eq_type = 1, adj = "5w")
+          V_i[wch_replace]  <- linearImpute(106, v1, 108, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 & H_i >= 39.5)){
+          wch_replace <- which(D_i >= 106 & D_i < 108 & H_i >= 39.5)
+          v1 <- 0.354 * H_i[wch_replace] - 1.7846
+          v2 <- calcStemVolumeMulti(dt_stem_i, 108, H_i[wch_replace], eq_type = 1, adj = "5w")
+          V_i[wch_replace]  <- linearImpute(106, v1, 108, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 108 & D_i < 110 & H_i < 22.5)){
+          wch_replace <- which(D_i >= 108 & D_i < 110 & H_i < 22.5)
+          v1 <- 0.327 * H_i[wch_replace] - 0.636
+          v2 <- calcStemVolumeMulti(dt_stem_i, 110, H_i[wch_replace], eq_type = 1, adj = "5w")
+          V_i[wch_replace]  <- linearImpute(108, v1, 110, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 108 & D_i < 110 & H_i >= 22.5)){
+          wch_replace <- which(D_i >= 108 & D_i < 110 & H_i >= 22.5)
+          v1 <- calcStemVolumeMulti(dt_stem_i, 108, H_i[wch_replace], eq_type = 1, adj = "5w")
+          v2 <- calcStemVolumeMulti(dt_stem_i, 110, H_i[wch_replace], eq_type = 1, adj = "5w")
+          V_i[wch_replace]  <- linearImpute(108, v1, 110, v2, D_i[wch_replace])
+        }
+        ### 3) Aomori Akamatsu
+        if(ls_Name[i] == "青森アカマツ" & any(D_i > 38 & D_i <= 46)){
+          wch_replace <- which(D_i > 38 & D_i <= 46)
+          v1 <- calcStemVolumeMulti(dt_stem_i, 38, H_i[wch_replace], eq_type = 1, adj = "None")
+          v2 <- calcStemVolumeMulti(dt_stem_i, 46, H_i[wch_replace], eq_type = 1, adj = "3w")
+          V_i[wch_replace]  <- linearImpute(38, v1, 46, v2, D_i[wch_replace])
+        }
+        if(ls_Name[i] == "青森アカマツ" & any(D_i > 46 & D_i < 56)){
+          wch_replace <- which(D_i > 46 & D_i < 56)
+          v1 <- calcStemVolumeMulti(dt_stem_i, 46, H_i[wch_replace], eq_type = 1, adj = "3w")
+          v2 <- calcStemVolumeMulti(dt_stem_i, 56, H_i[wch_replace], eq_type = 1, adj = "None")
+          V_i[wch_replace]  <- linearImpute(46, v1, 56, v2, D_i[wch_replace])
+        }
+        ### 4) Aomori Koyoju, Kochi Koyoju
+        if(ls_Name[i] == "青森広葉樹"){
+          wch_replace <- which(D_i < 68)
+          V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 1, adj = "None")
+          wch_replace <- which(D_i >= 68)
+          V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 1, adj = "5w")
+        }
+        if(ls_Name[i] == "高知広葉樹"){
+          wch_replace <- which(D_i < 58)
+          V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 2, adj = "3w")
+          wch_replace <- which(D_i >= 58)
+          V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 2, adj = "5w")
+        }
+      }
+
+
+
 
       # 2. DBH form factor -----
     } else if (ls_Name[i] %in% ls_FF_name){
@@ -1093,13 +1394,14 @@ stemVolume <- function(Name, D, H){
         f_h <- 0.435719 + 0.515867/H_i + 2.481278/H_i^2
         f <- (round2(f_d, 3) + round2(f_h, 3))/2
       } else if(ls_Name[i] == "北海道針葉樹") {
-        f_d <- 0.5 - 0.0008*D_i+ 0.421*exp(-0.12*D_i)
-        f_h <- 0.61 - 0.0055*H_i + 5.48*exp(-1.025*H_i)
+        f_d <- 0.5 - 0.0008*D_i+ 0.421*exp(-0.12*D_i) + 10^-10 # to avoid floating-point error
+        f_h <- 0.61 - 0.0055*H_i + 5.48*exp(-1.025*H_i) + 10^-10 # to avoid floating-point error
         f <- (round2(f_d, 3) + round2(f_h, 3))/2
       }
       ## calculate stem volume ---
       V_i <- H_i * D_i^2 * pi * f / 40000
       V_i[is.na(V_i)] <- 0  # in case D = 0 or H = 0
+
 
       # 3. Height form -----
     } else if (ls_Name[i] %in% ls_HF_name){

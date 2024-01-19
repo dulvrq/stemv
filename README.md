@@ -129,16 +129,15 @@ purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
 
 1.  幹材積計算プログラムにおける「札幌トドマツ」、「高知天然スギ」、「青森アカマツ」に対する追加の修正を反映していない。
 2.  「青森広葉樹」、「高知広葉樹」の5点移動平均の当てはめ範囲が異なる。
-3.  胸高形数法における四捨五入計算の際、一部で浮動小数点の誤差が発生する（「北海道針葉樹」）。
-4.  一部の計算における係数の有効数字が異なる。
+3.  一部の計算における係数の有効数字が異なる。
 
 各材積計算式におけるDBH: 0-200 cm (1 cmごと) および H: 0-50 m (1 mごと)
 の各組み合わせについて、幹材積計算プログラムと
 `stemVolume()`との材積の計算結果を比較すると以下のようになります。
 
 - 誤差が0.0001m<sup>3</sup>以上になる組み合わせは、全体の1.4%で0.01m<sup>3</sup>以上になる組み合わせは0.2%です。
-- このうち、0.01m<sup>3</sup>以上の誤差は全て上記1. ~ 3.
-  に起因し、0.0001m<sup>3</sup>以上の誤差は全て上記1. ~ 4.に起因します。
+- このうち、0.01m<sup>3</sup>以上の誤差は全て上記1. ~ 2.
+  に起因し、0.0001m<sup>3</sup>以上の誤差は全て上記1. ~ 3.に起因します。
 
 <table>
 <caption>
@@ -305,26 +304,6 @@ purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
 </td>
 <td style="text-align:right;">
 0.0556
-</td>
-</tr>
-<tr>
-<td style="text-align:left;">
-北海道針葉樹
-</td>
-<td style="text-align:right;">
-10251
-</td>
-<td style="text-align:right;">
-120
-</td>
-<td style="text-align:right;">
-192
-</td>
-<td style="text-align:right;">
-0.0004
-</td>
-<td style="text-align:right;">
-0.0000
 </td>
 </tr>
 </tbody>
