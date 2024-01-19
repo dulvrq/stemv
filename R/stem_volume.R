@@ -1479,6 +1479,8 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
   name_spp <- Spp
   if(str_detect(name_spp, pattern = "\\p{Katakana}|\\p{Han}"))
     name_spp <- stri_trans_general(name_spp, "Halfwidth-Fullwidth")
+  if(str_detect(name_spp, pattern = "\\p{Hiragana}"))
+    name_spp <- stri_trans_general(name_spp, "Hiragana-Katakana")
   # prepare for list RS ---
   if(is.null(RS)) RS <- getRegionName()
 
