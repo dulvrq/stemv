@@ -4,7 +4,7 @@
 \alias{stemVolume}
 \title{Calculate stem volume}
 \usage{
-stemVolume(Name, D, H)
+stemVolume(Name, D, H, ...)
 }
 \arguments{
 \item{Name}{Japanese character for identifying the calculation methods (e.g., \code{東京スギ}).
@@ -13,6 +13,8 @@ This is expected from \code{\link[=volumeName]{volumeName()}}.}
 \item{D}{Numeric. DBH in cm.}
 
 \item{H}{Numeric. Tree height in m.}
+
+\item{...}{Additional arguments. \code{list_data} and \code{adjust_to_excel} are supported.}
 }
 \value{
 Calculated stem volume
@@ -23,7 +25,7 @@ This function accepts numeric vectors for D & H.
 }
 \details{
 For details, please see the following reference:\cr
-細田ら (2010) 現行立木幹材積表と材積式による計算値との相違およびその修正方法. 森林計画学会誌 44: 23-39.\cr
+細田ら (2010) 現行立木幹材積表と材積式による計算値との相違およびその修正方法. 森林計画学会誌 44: 23-39.
 (Kazuo HOSODA, Yasushi MITSUDA and Toshiro IEHARA 2010:
 "Differences between the present stem volume tables and the values of the volume equations, and their correction"
 Jpn. J. For. Plann. 44:23-39.)
@@ -31,13 +33,11 @@ Jpn. J. For. Plann. 44:23-39.)
 There are several differences compared with the description in the original article and
 computational program developed based on the same article as follows:
 \itemize{
-\item 3点移動平均、5点移動平均が複数適用される場合を反映(2024/01/11)
-\item 一部の係数の有効数字で係数の時点でずれが発生している(函館エゾマツ、東京広葉樹の62cm、長野カラマツなど)
-\item 形状高法は係数を直線補間してるが、範囲外も上限/下限で線形補間している。
-\item マクロにおける「札幌トドマツ」、「高知天然スギ」、「青森アカマツ」の修正は反映していない。
-\item 「青森広葉樹」、「高知広葉樹」の5点移動平均の当てはめ範囲がマクロ関数と異なる。
-\item 「北海道針葉樹」の小数第3位への四捨五入で、round()が偶数丸めこみ(五捨五入)を行うため誤差が生じる場合がある。
-(2024/01/14)関数を定義して修正したが、内部的な数値のズレで合わない場合が存在する(e.g. H=39mかつD>=81cm)
+\item The significant digits for the parameters of several equations are different
+(e.g., \code{函館エゾマツ}, \code{東京広葉樹}, \code{長野カラマツ}).
+\item The additional revisions on \code{札幌トドマツ},  \code{高知天然スギ}, and \code{青森アカマツ} are not reflected.
+\item The range for 5 points moving average adjustment is different for \code{青森広葉樹} and \code{高知広葉樹}.
+\item The error in floating-point numbers can cause the differences in rounding calculation for \code{北海道針葉樹}.
 }
 }
 \references{
