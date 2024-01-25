@@ -1028,8 +1028,8 @@ stemVolume <- function(Name, D, H, ...){
   if(length(Name) == 1 & length(D) > 1) Name <- rep(Name, length(D)) # in case single Name is provided.
   if(!all(length(Name) == c(length(D), length(H)))) stop("Different data length.")
   ## adjustment to D & H. if either is NA, cause error ---
-  if(any(D < 0)) D[D < 0] <- 0
-  if(any(H < 0)) H[H < 0] <- 0
+  if(any(D < 0, na.rm = T)) D[D < 0] <- 0
+  if(any(H < 0, na.rm = T)) H[H < 0] <- 0
   V <- rep(NA, length(D))
 
   ## data for coefficients ---
@@ -1493,7 +1493,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
       name_RS <- "旭川エゾマツ"
     } else if(name_spp %in% RS$s_x_Karamatsu){
       name_RS <- "北海道カラマツ"
-    } else if(name_spp %in% RS$s_x_Sugi){
+    } else if(name_spp %in% c(RS$s_x_Sugi, RS$s_x_TenSugi)){
       name_RS <- "青森スギ"
     } else if(any(str_detect(name_spp, RS$s_x_ConiferOther))){
       name_RS <- "北海道針葉樹"
@@ -1510,7 +1510,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
       name_RS <- "北見エゾマツ"
     } else if(name_spp %in% RS$s_x_Karamatsu){
       name_RS <- "北海道カラマツ"
-    } else if(name_spp %in% RS$s_x_Sugi){
+    } else if(name_spp %in% c(RS$s_x_Sugi, RS$s_x_TenSugi)){
       name_RS <- "青森スギ"
     } else if(any(str_detect(name_spp, RS$s_x_ConiferOther))){
       name_RS <- "北海道針葉樹"
@@ -1527,7 +1527,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
       name_RS <- "帯広エゾマツ"
     } else if(name_spp %in% RS$s_x_Karamatsu){
       name_RS <- "北海道カラマツ"
-    } else if(name_spp %in% RS$s_x_Sugi){
+    } else if(name_spp %in% c(RS$s_x_Sugi, RS$s_x_TenSugi)){
       name_RS <- "青森スギ"
     } else if(any(str_detect(name_spp, RS$s_x_ConiferOther))){
       name_RS <- "北海道針葉樹"
@@ -1544,7 +1544,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
       name_RS <- "札幌エゾマツ"
     } else if(name_spp %in% RS$s_x_Karamatsu){
       name_RS <- "北海道カラマツ"
-    } else if(name_spp %in% RS$s_x_Sugi){
+    } else if(name_spp %in% c(RS$s_x_Sugi, RS$s_x_TenSugi)){
       name_RS <- "青森スギ"
     } else if(any(str_detect(name_spp, RS$s_x_ConiferOther))){
       name_RS <- "北海道針葉樹"
@@ -1565,7 +1565,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
       name_RS <- "函館ブナ"
     } else if(name_spp %in% RS$s_x_Karamatsu){
       name_RS <- "北海道カラマツ"
-    } else if(name_spp %in% RS$s_x_Sugi){
+    } else if(name_spp %in% c(RS$s_x_Sugi, RS$s_x_TenSugi)){
       name_RS <- "青森スギ"
     } else if(any(str_detect(name_spp, RS$s_x_ConiferOther))){
       name_RS <- "北海道針葉樹"
@@ -1612,7 +1612,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
     }
     ## 8. Maebashi
   } else if (name_region %in% RS$r_8_Maebashi){
-    if(name_spp %in% RS$s_8_Sugi & name_region %in% c("会津新潟", "新潟")){
+    if(name_spp %in% RS$s_8_Sugi & name_region %in% c("会津新潟", "新潟", "会津地方")){
       name_RS <- "会津新潟スギ"
     } else if(name_spp %in% RS$s_8_Sugi){
       name_RS <- "前橋スギ"
@@ -1620,7 +1620,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
       name_RS <- "前橋ヒノキ"
     } else if(name_spp %in% RS$s_8_Karamatsu){
       name_RS <- "前橋カラマツ"
-    } else if(name_spp %in% RS$s_8_Akamatsu & name_region %in% c("会津新潟", "新潟")){
+    } else if(name_spp %in% RS$s_8_Akamatsu & name_region %in% c("会津新潟", "新潟", "会津地方")){
       name_RS <- "会津新潟アカマツ"
     } else if(name_spp %in% RS$s_8_Akamatsu){
       name_RS <- "前橋アカマツ"
@@ -1714,6 +1714,9 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
   } else if (name_region %in% RS$r_12_Osaka){
     if(name_spp %in% RS$s_12_Sugi){
       name_RS <- "大阪スギ"
+    } else if(name_spp %in% RS$s_12_TenSugi & !(name_region %in% c("山陰", "鳥取", "島根", "石川", "福井",
+                                                                     "中丹地方", "丹後地方", "但馬地方"))){
+      name_RS <- "大阪スギ"
     } else if(name_spp %in% RS$s_12_TenSugi){
       name_RS <- "山陰天然スギ"
     } else if(name_spp %in% RS$s_12_Hinoki){
@@ -1765,22 +1768,24 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
     }
     ## 14. Kumamoto
   } else if (name_region %in% RS$r_14_Kumamoto){
-    if(name_spp %in% RS$s_14_Sugi & name_region == "飫肥"){
+    if(name_spp %in% c(RS$s_14_Sugi, RS$s_14_TenSugi) & name_region %in% c("飫肥", "飫肥地方")){
       name_RS <- "飫肥スギ"
     } else if(name_spp %in% RS$s_14_Sugi){
       name_RS <- "熊本スギ"
-    } else if(name_spp %in% RS$s_14_TenSugi & name_region == "下屋久"){
+    } else if(name_spp %in% RS$s_14_TenSugi & !(name_region %in% c("下屋久", "下屋久地方", "上屋久", "上屋久地方"))){
+      name_RS <- "熊本スギ"
+    } else if(name_spp %in% RS$s_14_TenSugi & name_region %in% c("下屋久", "下屋久地方")){
       name_RS <- "下屋久天然スギ"
     } else if(name_spp %in% RS$s_14_TenSugi){
       name_RS <- "上屋久天然スギ"
     } else if(name_spp %in% RS$s_14_Hinoki){
       name_RS <- "熊本ヒノキ"
-    } else if(name_spp %in% RS$s_14_Akamatsu & name_region == "霧島"){
+    } else if(name_spp %in% RS$s_14_Akamatsu & name_region %in% c("霧島", "霧島地方")){
       name_RS <- "霧島アカマツ"
-    } else if(name_spp %in% RS$s_14_Akamatsu){
-      name_RS <- "熊本アカマツ"
-    } else if(name_spp %in% RS$s_14_TenAkamatsu){
+    } else if(name_spp %in% RS$s_14_TenAkamatsu & name_region %in% c("霧島", "霧島地方")){
       name_RS <- "霧島天然アカマツ"
+    } else if(name_spp %in% c(RS$s_14_Akamatsu, RS$s_14_TenAkamatsu)){
+      name_RS <- "熊本アカマツ"
     } else if(name_spp %in% RS$s_14_Momi){
       name_RS <- "熊本モミ"
     } else if(name_spp %in% RS$s_14_Tsuga){
