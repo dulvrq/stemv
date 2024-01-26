@@ -586,6 +586,9 @@ calcStemVolumeMulti <- function(dt_stem_i, D, H, eq_type = 1, adj = "None", list
 #' @importFrom dplyr %>% filter mutate group_by summarize arrange
 #' @importFrom utils tail
 #' @importFrom cli cli_abort cli_alert_info cli_div
+#' @examples
+#' stemVolumeSingle("上屋久天然スギ", 62, 28, off_adj = TRUE)
+#'
 #' @export
 #'
 
@@ -1072,6 +1075,12 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
 #' @importFrom purrr map
 #' @importFrom utils tail
 #' @importFrom cli cli_abort cli_alert_info cli_progress_bar cli_progress_update cli_div
+#' @examples
+#' Name <- c("北海道カラマツ", "高知広葉樹")
+#' D <- c(15, 20)
+#' H <- c(12, 13)
+#' stemVolume(Name, D, H)
+#'
 #' @export
 #'
 stemVolume <- function(Name, D, H, ...){
@@ -1585,6 +1594,9 @@ stemVolume <- function(Name, D, H, ...){
 #' @importFrom stringr str_replace str_detect
 #' @importFrom stringi stri_trans_general
 #' @importFrom cli cli_abort cli_alert_warning cli_div
+#' @examples
+#' volumeNameSingle("大阪", "マテバシイ")
+#'
 #' @export
 
 volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
@@ -1993,6 +2005,10 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
 #' @importFrom purrr pmap
 #' @importFrom dplyr %>% filter mutate group_by summarize
 #' @importFrom cli cli_abort cli_alert_warning cli_div
+#'
+#' @examples
+#' volumeName("青森", "スギ")
+#'
 #' @export
 #'
 volumeName <- function(Region, Spp, RS = NULL, ...){

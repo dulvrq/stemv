@@ -38,3 +38,7 @@ Species & Region names are defined following Hosoda et al. (2010) Jpn. J. For. P
 "幹材積計算プログラム" developed by FFPRI.
 (https://www.ffpri.affrc.go.jp/database/stemvolume/index.html)
 }
+\examples{
+volumeNameSingle("大阪", "マテバシイ")
+
+}
