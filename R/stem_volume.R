@@ -1471,20 +1471,22 @@ stemVolume <- function(Name, D, H, ...){
       ## get f coefficient ---
       if(ls_Name[i] %in% unique(dt_ff$name)){
         D_f <- floor(D_i/2)*2
-        f1 <- map(D_i, function(x) dt_ff$factor[dt_ff$name == ls_Name[i] & dt_ff$DBH == floor(x/2) * 2])
+        f1 <- map(D_i, function(x) dt_ff$factor[which(dt_ff$name == ls_Name[i] & dt_ff$DBH == floor(x/2) * 2)])
         f1[lengths(f1) == 0] <- NA
+        f1[lengths(f1) >  1] <- NA
         f1 <- unlist(f1)
-        f2 <- map(D_i, function(x) dt_ff$factor[dt_ff$name == ls_Name[i] & dt_ff$DBH == floor(x/2) * 2 + 2])
+        f2 <- map(D_i, function(x) dt_ff$factor[which(dt_ff$name == ls_Name[i] & dt_ff$DBH == floor(x/2) * 2 + 2)])
         f2[lengths(f2) == 0] <- NA
+        f2[lengths(f2) >  1] <- NA
         f2 <- unlist(f2)
         ## adjust if out of range ---
-        if(any(D_i >= max(dt_ff$DBH))){
+        if(any(D_i >= max(dt_ff$DBH), na.rm = T)){
           wch_replace <- which(D_i >= max(dt_ff$DBH))
           f1[wch_replace] <- dt_ff$factor[dt_ff$name == ls_Name[i] & dt_ff$DBH == max(dt_ff$DBH) - 2]
           f2[wch_replace] <- dt_ff$factor[dt_ff$name == ls_Name[i] & dt_ff$DBH == max(dt_ff$DBH)]
           D_f[wch_replace] <- max(dt_ff$DBH) - 2
         }
-        if(any(D_i < min(dt_ff$DBH))){
+        if(any(D_i < min(dt_ff$DBH), na.rm = T)){
           wch_replace <- which(D_i < min(dt_ff$DBH))
           f1[wch_replace] <- dt_ff$factor[dt_ff$name == ls_Name[i] & dt_ff$DBH == min(dt_ff$DBH)]
           f2[wch_replace] <- dt_ff$factor[dt_ff$name == ls_Name[i] & dt_ff$DBH == min(dt_ff$DBH) + 2]
@@ -1510,20 +1512,20 @@ stemVolume <- function(Name, D, H, ...){
       ## get hf coefficient ---
       dt_hf_i <- dt_hf |> filter(name == ls_Name[i])
       H_hf_i  <- floor(H_i)
-      hf1 <- map(H_i, function(x) dt_hf_i$factor[dt_hf_i$H == floor(x)])
+      hf1 <- map(H_i, function(x) dt_hf_i$factor[which(dt_hf_i$H == floor(x))])
       hf1[lengths(hf1) == 0] <- NA
       hf1 <- unlist(hf1)
-      hf2 <- map(H_i, function(x) dt_hf_i$factor[dt_hf_i$H == floor(x)+1])
+      hf2 <- map(H_i, function(x) dt_hf_i$factor[which(dt_hf_i$H == floor(x)+1)])
       hf2[lengths(hf2) == 0] <- NA
       hf2 <- unlist(hf2)
       ## adjust if out of range ---
-      if(any(H_i >= max(dt_hf_i$H))){
+      if(any(H_i >= max(dt_hf_i$H), na.rm = T)){
         wch_replace <- which(H_i >= max(dt_hf_i$H))
         hf1[wch_replace] <- dt_hf_i$factor[dt_hf_i$H == max(dt_hf_i$H) - 1]
         hf2[wch_replace] <- dt_hf_i$factor[dt_hf_i$H == max(dt_hf_i$H)]
         H_hf_i[wch_replace] <- max(dt_hf_i$H) - 1
       }
-      if(any(H_i < min(dt_hf_i$H))){
+      if(any(H_i < min(dt_hf_i$H), na.rm = T)){
         wch_replace <- which(H_i < min(dt_hf_i$H))
         hf1[wch_replace] <- dt_hf_i$factor[dt_hf_i$H == min(dt_hf_i$H)]
         hf2[wch_replace] <- dt_hf_i$factor[dt_hf_i$H == min(dt_hf_i$H) + 1]
