@@ -55,6 +55,10 @@ computational program developed based on the same article as follows:
 \item The error in floating-point numbers can cause the differences in rounding calculation for \code{北海道針葉樹}.
 }
 }
+\examples{
+stemVolumeSingle("上屋久天然スギ", 62, 28, off_adj = T)
+
+}
 \references{
 \url{https://doi.org/10.20659/jjfp.44.2_23}
 }

@@ -48,6 +48,13 @@ computational program developed based on the same article as follows:
 \item The error in floating-point numbers can cause the differences in rounding calculation for \code{北海道針葉樹}.
 }
 }
+\examples{
+Name <- c("北海道カラマツ", "高知広葉樹")
+D <- c(15, 20)
+H <- c(12, 13)
+stemVolume(Name, D, H)
+
+}
 \references{
 \url{https://doi.org/10.20659/jjfp.44.2_23}
 }
