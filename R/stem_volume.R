@@ -1019,7 +1019,7 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
 
   } else {
     if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
-      cli_abort(c("{.tmp Name} should mach one in a list from {.help [{.fun volumeName}](stemv::volumeName)}.",
+      cli_abort(c("{.tmp Name} should mach one in a list from {.fun stemv::volumeName}.",
                   "x" = "{.tmp2 {.var {Name}}} is not in a list of stem volume equation."))
     } else {
       cli_alert_warning("{.tmp2 {.var {Name}}} is not in a list, use {.fun stemv::volumeName}.")
@@ -1536,7 +1536,7 @@ stemVolume <- function(Name, D, H, ...){
       ## does not much any stem volume equation ---
     } else {
       if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
-        cli_abort(c("{.tmp Name} should mach one in a list from {.help [{.fun volumeName}](stemv::volumeName)}.",
+        cli_abort(c("{.tmp Name} should mach one in a list from {.fun stemv::volumeName}.",
                     "x" = "{.tmp2 {.var {ls_Name[i]}}} is not in a list of stem volume equation."))
       } else {
         cli_alert_warning("{.tmp2 {.var {ls_Name[i]}}} is not in a list, use {.fun stemv::volumeName}.")
