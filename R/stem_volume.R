@@ -573,20 +573,58 @@ calcStemVolumeMulti <- function(dt_stem_i, D, H, eq_type = 1, adj = "None", list
 #' @param list_data  A list of data for coefficients. This is expected from [getStemCoefficients()].
 #'   If NULL, internally call [getStemCoefficients()].
 #' @param off_adj  Logical. If TRUE, all moving average adjustment for junctions become inactive.
-#' @param ... Additional arguments. `list_data` and `adjust_to_excel` are supported.
+#' @param ... Additional arguments.
+#'
+#'  These can be:
+#'  * `stop_if_NA`: logical. If TRUE, cause error when NAs/NaNs/Inf/-Inf are provided for `Name`/`D`/`H`;
+#'    otherwise return NAs.
+#'  * `adjust_to_excel`: logical. Calculate volume in the same way as program.
 #' @return Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
 #'
 #' @importFrom dplyr %>% filter mutate group_by summarize arrange
 #' @importFrom utils tail
+#' @importFrom cli cli_abort cli_alert_info cli_div
 #' @export
 #'
 
 stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...){
-  ## adjustment to D & H. if either is NA, cause error ---
-  if(D < 0) D <- 0
-  if(H < 0) H <- 0
+  ## check D, H --
+  cli_div(theme = list(.tmp = list(color = "yellow4", "font-style" = "italic", "font-weight" = "bold"), # set color
+                       .tmp2 = list(color = "blue", "font-style" = "italic")))
+  ### check length ---
+  if(any(c(length(Name) != 1, length(D) != 1, length(H) != 1)))
+    cli_abort(c("x" ="Only single observation is allowed for Name/D/H."))
+  ### check NA/NaN/Inf ---
+  if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
+    if(is.na(Name)) cli_abort(c("NA/NaN should be removed from {.tmp Name}.", "x" = "{.tmp Name} is NA/NaN."))
+    if(is.na(D))    cli_abort(c("NA/NaN should be removed from {.tmp D}.", "x" = "{.tmp D} is NA/NaN."))
+    if(is.na(H))    cli_abort(c("NA/NaN should be removed from {.tmp H}.", "x" = "{.tmp H} is NA/NaNs."))
+    if(is.infinite(D)) cli_abort(c("Inf/-Inf should be removed from {.tmp D}.", "x" = "{.tmp D} is Inf/-Inf."))
+    if(is.infinite(H)) cli_abort(c("Inf/-Inf should be removed from {.tmp H}.", "x" = "{.tmp H} is Inf/-Inf."))
+  } else {
+    if(is.na(Name)) cli_alert_warning("{.tmp Name} is NA/NaN.")
+    if(is.na(D))    cli_alert_warning("{.tmp D} is NA/NaN.")
+    if(is.na(H))    cli_alert_warning("{.tmp H} is NA/NaN.")
+    if(is.infinite(D)) cli_alert_warning("{.tmp D} is Inf/-Inf.")
+    if(is.infinite(H)) cli_alert_warning("T{.tmp H} is Inf/-Inf.")
+  }
+  ### check class --
+  if(!is.numeric(D) & !is.na(D)) cli_abort(c("{.tmp D} should be numeric.", "x" = "class {.tmp D} is {.cls {class(D)}}."))
+  if(!is.numeric(H) & !is.na(H)) cli_abort(c("{.tmp H} should be numeric.", "x" = "class {.tmp H} is {.cls {class(H)}}."))
+
+  ## adjustment to D & H. if either is NA, return NA ---
+  if(is.na(D) | is.na(H)) return(NA)
+  if(is.infinite(D) | is.infinite(H)) return(NA)
+  if(D < 0){
+    cli_alert_warning("{.tmp D} is negative values (< 0), adjusting to 0.")
+    D <- 0
+  }
+  if(H < 0){
+    cli_alert_warning("{.tmp H} is negative values (< 0), adjusting to 0.")
+    H <- 0
+  }
 
   ## read data for coefficients if necessary ---
   if(is.null(list_data)) list_data <- getStemCoefficients()
@@ -630,7 +668,7 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
   if(Name %in% ls_stem_name){
     ## filter eq. by region+species name
     dt_stem_i <- dt_stem |> filter(name == Name)
-    if(nrow(dt_stem_i) == 0) stop("No such Name in equation.")
+    if(nrow(dt_stem_i) == 0) cli_alert_warning("{.tmp Name} is not in the list for this caclulation.")
 
     ## eq. type 1 -----
     if(dt_stem_i$var_left[1] == "log v" &
@@ -706,7 +744,7 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
       }
 
     } else {
-      stop("No such equation.")
+      cli_abort(c("x" = "There are no such equation type."))
     }
 
     ## special adjustment -----
@@ -980,7 +1018,13 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
     V <- D^2 * pi * hf / 40000
 
   } else {
-    stop("No such Name in equation.")
+    if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
+      cli_abort(c("{.tmp Name} should mach one in a list from {.help [{.fun volumeName}](stemv::volumeName)}.",
+                  "x" = "{.tmp2 {.var {Name}}} is not in a list of stem volume equation."))
+    } else {
+      cli_alert_warning("{.tmp2 {.var {Name}}} is not in a list, use {.fun stemv::volumeName}.")
+      V <- NA
+    }
   }
 
   return(V)
@@ -1014,22 +1058,80 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
 #'   This is expected from [volumeName()].
 #' @param D  Numeric. DBH in cm.
 #' @param H  Numeric. Tree height in m.
-#' @param ... Additional arguments. `list_data` and `adjust_to_excel` are supported.
+#' @param ... Additional arguments.
+#'
+#'  These can be:
+#'  * `stop_if_NA`: logical. If TRUE, cause error when NAs/NaNs/Inf/-Inf are provided for `Name`/`D`/`H`;
+#'    otherwise return NAs.
+#'  * `list_data`: data from [getStemCoefficientsRound()] if preferred.
+#'  * `adjust_to_excel`: logical. Calculate volume in the same way as program.
 #' @return  Calculated stem volume
 #'
 #' @references \url{https://doi.org/10.20659/jjfp.44.2_23}
 #' @importFrom dplyr %>% filter mutate group_by summarize arrange
 #' @importFrom purrr map
 #' @importFrom utils tail
+#' @importFrom cli cli_abort cli_alert_info cli_progress_bar cli_progress_update cli_div
 #' @export
 #'
 stemVolume <- function(Name, D, H, ...){
-  ## check the length ---
-  if(length(Name) == 1 & length(D) > 1) Name <- rep(Name, length(D)) # in case single Name is provided.
-  if(!all(length(Name) == c(length(D), length(H)))) stop("Different data length.")
-  ## adjustment to D & H. if either is NA, cause error ---
-  if(any(D < 0, na.rm = T)) D[D < 0] <- 0
-  if(any(H < 0, na.rm = T)) H[H < 0] <- 0
+  ## check D, H --
+  cli_div(theme = list(.tmp = list(color = "yellow4", "font-style" = "italic", "font-weight" = "bold"), # set color
+                       .tmp2 = list(color = "blue", "font-style" = "italic")))
+  if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
+    if(any(is.na(Name))) cli_abort(c("NA/NaNs should be removed from {.tmp Name}.",
+                                     "x" = "There are {sum(is.na(Name))} NA/NaNs in {.tmp Name}."))
+    if(any(is.na(D))) cli_abort(c("NA/NaNs should be removed from {.tmp D}.",
+                                  "x" = "There are {sum(is.na(D))} NA/NaNs in {.tmp D}."))
+    if(any(is.na(H))) cli_abort(c("NA/NaNs should be removed from {.tmp H}.",
+                                  "x" = "There are {sum(is.na(H))} NA/NaNs in {.tmp H}."))
+    if(any(is.infinite(D))) cli_abort(c("Inf/-Inf should be removed from {.tmp D}.",
+                                  "x" = "There are {sum(is.infinite(D))} Inf/-Inf in {.tmp D}."))
+    if(any(is.infinite(H))) cli_abort(c("Inf/-Inf should be removed from {.tmp H}.",
+                                        "x" = "There are {sum(is.infinite(H))} Inf/-Inf in {.tmp H}."))
+  } else {
+    if(any(is.na(Name))) cli_alert_warning("There are {sum(is.na(Name))} NA/NaNs in {.tmp Name}.")
+    if(any(is.na(D))) cli_alert_warning("There are {sum(is.na(D))} NA/NaNs in {.tmp D}.")
+    if(any(is.na(H))) cli_alert_warning("There are {sum(is.na(H))} NA/NaNs in {.tmp H}.")
+    if(any(is.infinite(D))) cli_alert_warning("There are {sum(is.infinite(D))} Inf/-Inf in {.tmp D}.")
+    if(any(is.infinite(H))) cli_alert_warning("There are {sum(is.infinite(H))} Inf/-Inf in {.tmp H}.")
+  }
+
+  ## check length ---
+  if(length(Name) == 1 & length(D) > 1){  # in case single Name is provided.
+    cli_alert_info("{.tmp Name} is a single, but {.tmp D} is multiple. {.tmp Name} is recycled to length {length(D)}.")
+    Name <- rep(Name, length(D))
+  }
+  if(!all(length(Name) == c(length(D), length(H)))){
+    cli_abort(c("Different data length of Name/D/H, but shoud be the same.",
+                "x" = paste0("The length of {.tmp Name} is {length(Name)}, ",
+                             "the length of {.tmp D} is {length(D)}, ",
+                             "the length of {.tmp H} is {length(H)}.")))
+  }
+
+  ## check the class --
+  if(!is.numeric(D) & !all(is.na(D))) cli_abort(c("{.tmp D} should be numeric.",
+                                                  "x" = "class {.tmp D} is {.cls {class(D)}}."))
+  if(!is.numeric(H) & !all(is.na(H))) cli_abort(c("{.tmp H} should be numeric.",
+                                                  "x" = "class {.tmp H} is {.cls {class(H)}}."))
+
+  ## set progress bar if data is large ---
+  if(length(D) > 10^5)  cli_progress_bar("Calculating data", total = length(unique(Name)))
+
+  ## adjustment to D & H. if either is NA, return NA ---
+  if(any(is.infinite(D))) D[is.infinite(D)] <- NA
+  if(any(is.infinite(H))) H[is.infinite(H)] <- NA
+  if(any(D < 0, na.rm = T)){
+    cli_alert_warning("There are {sum(D < 0, na.rm = T)} negative values (< 0) in {.tmp D}, adjusting to 0.")
+    D[D < 0] <- 0
+  }
+  if(any(H < 0, na.rm = T)){
+    cli_alert_warning("There are {sum(H < 0, na.rm = T)} negative values (< 0) in {.tmp H}, adjusting to 0.")
+    H[H < 0] <- 0
+  }
+
+
+  ## prepare V for all measurements ---
   V <- rep(NA, length(D))
 
   ## data for coefficients ---
@@ -1076,7 +1178,7 @@ stemVolume <- function(Name, D, H, ...){
   ## loop over each unique Name ---
   ls_Name <- unique(Name)
   if(!all(ls_Name %in% c(ls_stem_name, ls_FF_name, ls_HF_name)))
-    stop("There are Names that are not listed in this caclulation.")
+    cli_alert_warning("There are {.tmp Name}s that are not listed in this caclulation.")
 
   for(i in 1:length(ls_Name)){
     ## extract D & H ---
@@ -1099,7 +1201,7 @@ stemVolume <- function(Name, D, H, ...){
       } else if (dt_stem_i$var_left[1] == "log v" & dt_stem_i$var_b[1] == "d2h" & dt_stem_i$var_c[1] == ""){
         eq_type_i <- 4
       } else {
-        stop("No such equation.")
+        cli_abort(c("{.tmp eq_type_i} should be integer between 1 and 4.", "x" = "There are no such equation type."))
       }
 
       ## loop for each DBH class (with/without adjustment) ---
@@ -1431,14 +1533,22 @@ stemVolume <- function(Name, D, H, ...){
       hf <- linearImpute(H_hf_i, hf1, H_hf_i+1, hf2, H_i)
       V_i <- D_i^2 * pi * hf / 40000
 
+      ## does not much any stem volume equation ---
     } else {
-      stop("No such Name in equation.")
+      if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
+        cli_abort(c("{.tmp Name} should mach one in a list from {.help [{.fun volumeName}](stemv::volumeName)}.",
+                    "x" = "{.tmp2 {.var {ls_Name[i]}}} is not in a list of stem volume equation."))
+      } else {
+        cli_alert_warning("{.tmp2 {.var {ls_Name[i]}}} is not in a list, use {.fun stemv::volumeName}.")
+      }
     }
 
     ## combine the calculated volume ---
     V[wch_i] <- V_i
-  }
 
+    if(length(D) > 10^5) cli_progress_update()
+  }
+  if(any(is.na(V))) cli_alert_warning("The calculation of {.tmp V} contatins {sum(is.na(V))} NA/NaNs.")
   return(V)
 }
 
@@ -1472,6 +1582,7 @@ stemVolume <- function(Name, D, H, ...){
 #' @importFrom dplyr %>% filter mutate group_by summarize
 #' @importFrom stringr str_replace str_detect
 #' @importFrom stringi stri_trans_general
+#' @importFrom cli cli_abort cli_alert_warning cli_div
 #' @export
 
 volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
@@ -1485,6 +1596,25 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     stop_if_NA <- list(...)[["stop_if_NA"]]
   } else {
     stop_if_NA <- FALSE  # do not cause error if NA by default
+  }
+
+  ### check length ---
+  cli_div(theme = list(.tmp = list(color = "yellow4", "font-style" = "italic", "font-weight" = "bold"), # set color
+                       .tmp2 = list(color = "blue", "font-style" = "italic")))
+  if(any(c(length(Region) != 1, length(Region) != 1)))
+    cli_abort(c("x" = "Only single observation is allowed for Region/Spp."))
+  ## stop_if_NA = TRUE & Spp = NA, then cause error
+  if(stop_if_NA){
+    if(is.na(Spp)) cli_abort(c("{.tmp Spp} should be character.", "x" = "{.tmp Spp} is NA/NaN."))
+    if(!is.character(Spp)) cli_abort(c("{.tmp Spp} should be character.", "x" = "class {.tmp Spp} is {.cls {class(Spp)}}."))
+  }
+  ## stop_if_NA = FALSE & Spp = NA, then return NA
+  if(!stop_if_NA){
+    if(is.na(Spp)){
+      cli_alert_warning(c("{.tmp Spp} should be character, return {.tmp2 {.var {name_invalid}}}."))
+      return(name_invalid)
+    }
+    if(!is.character(Spp)) cli_abort(c("{.tmp Spp} should be character.", "x" = "class {.tmp Spp} is {.cls {class(Spp)}}."))
   }
 
   # prepare for Region ---
@@ -1516,7 +1646,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "北海道広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Asahikawa).")
     }
     ## 2. Kitami
   } else if (name_region %in% RS$r_2_Kitami){
@@ -1533,7 +1663,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "北海道広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Kitami).")
     }
     ## 3. Obihiro
   } else if (name_region %in% RS$r_3_Obihiro){
@@ -1550,7 +1680,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "北海道広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Obihiro).")
     }
     ## 4. Sapporo
   } else if (name_region %in% RS$r_4_Sapporo){
@@ -1567,7 +1697,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "北海道広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Sapporo).")
     }
     ## 5. Hakodate
   } else if (name_region %in% RS$r_5_Hakodate){
@@ -1588,7 +1718,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "北海道広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Hakodate).")
     }
     ## 6. Aomori
   } else if (name_region %in% RS$r_6_Aomori){
@@ -1607,7 +1737,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "青森広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Aomori).")
     }
     ## 7. Akita
   } else if (name_region %in% RS$r_7_Akita){
@@ -1624,7 +1754,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "秋田広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Akita).")
     }
     ## 8. Maebashi
   } else if (name_region %in% RS$r_8_Maebashi){
@@ -1649,7 +1779,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "前橋広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Maebashi).")
     }
     ## 9. Tokyo
   } else if (name_region %in% RS$r_9_Tokyo){
@@ -1670,7 +1800,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "東京広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Tokyo).")
     }
     ## 10. Nagano
   } else if (name_region %in% RS$r_10_Nagano){
@@ -1699,7 +1829,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "長野ブナ"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Nagano).")
     }
     ## 11. Nagoya
   } else if (name_region %in% RS$r_11_Nagoya){
@@ -1724,7 +1854,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "名古屋広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Nagoya).")
     }
     ## 12. Osaka
   } else if (name_region %in% RS$r_12_Osaka){
@@ -1755,7 +1885,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_12_Broad_2))){
       name_RS <- "大阪広葉樹2型"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Osaka).")
     }
     ## 13. Kochi
   } else if (name_region %in% RS$r_13_Kochi){
@@ -1780,7 +1910,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_x_BroadleafOther))){
       name_RS <- "高知広葉樹"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Kochi).")
     }
     ## 14. Kumamoto
   } else if (name_region %in% RS$r_14_Kumamoto){
@@ -1817,12 +1947,13 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
     } else if(any(str_detect(name_spp, RS$s_14_Broad_2))){
       name_RS <- "熊本広葉樹2類"
     } else {
-      stop("No such species in this region.")
+      cli_abort("No such species in this region (Kumamoto).")
     }
   } else {
     if(stop_if_NA){
-      stop("No such region.")
+      cli_abort(c("x" = "{.tmp2 {.var {Region}}} is not in the region list. There are no such region."))
     } else {
+      cli_alert_warning(c("{.tmp2 {.var {Region}}} is not in the region list, return {.tmp2 {.var {name_invalid}}}."))
       name_RS <- name_invalid
     }
 
@@ -1859,6 +1990,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
 #'
 #' @importFrom purrr pmap
 #' @importFrom dplyr %>% filter mutate group_by summarize
+#' @importFrom cli cli_abort cli_alert_warning cli_div
 #' @export
 #'
 volumeName <- function(Region, Spp, RS = NULL, ...){
@@ -1868,14 +2000,23 @@ volumeName <- function(Region, Spp, RS = NULL, ...){
 
   # for multiple values ---
   } else {
-    ## get parameters for Region & Name ---
-    # if(is.null(RS)) RS <- getRegionName()
+    ## check length ---
+    cli_div(theme = list(.tmp = list(color = "yellow4", "font-style" = "italic", "font-weight" = "bold"), # set color
+                         .tmp2 = list(color = "blue", "font-style" = "italic")))
+    if(length(Region) != length(Spp))
+      cli_abort(c("The length should be the same for Region/Spp.",
+                  "x" = "The length of {.tmp Region} is {length(Region)}, but the length of {.tmp Spp} is {length(Spp)}."))
+    ## check class ---
+    if(any(!is.na(Spp) & !is.character(Spp)))
+      cli_abort(c("{.tmp Spp} should be character.",
+                  "x" = "There are {sum(!is.na(Spp) & !is.character(Spp))} {.tmp Spp} that are not {.cls character}."))
+
     ## unique combinations of Region & Spp ---
     dt_comb <- data.frame(Region = Region, Spp = Spp) |>
       group_by(Region, Spp) |>
       summarize(.groups = "drop")
     ## get Name for each unique comb. ---
-    Name_comb <- pmap(dt_comb, volumeNameSingle, RS, c(...))
+    Name_comb <- pmap(dt_comb, volumeNameSingle, RS, ...)
     ## allocate to each Region & Spp ---
     Name <- factor(paste0(Region, Spp),
                    levels = paste0(dt_comb$Region, dt_comb$Spp),

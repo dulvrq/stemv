@@ -48,8 +48,8 @@ volumeName(Region, Spp)
 ```
 
 `volumeName()`を利用する場合、樹種はカタカナで記入してください。漢字等にすると全て広葉樹になります。  
-ただし、`天然スギ`, `天然ヒノキ`, `広葉樹`,
-`針葉樹`は例外的に処理できます。
+ただし、`天然スギ`, `天然ヒノキ`, `天然アカマツ`, `広葉樹`,
+`針葉樹`などは例外的に処理できます。
 
 ``` r
 ## correct
@@ -70,19 +70,28 @@ volumeName("東京", "バナナ")
 #> [1] "東京広葉樹"
 ```
 
-リストにない地域を指定した場合、エラーになります。
-ただし、特定の文字列を返すようにすることはできます。
+リストにない地域を指定した場合、`NA`になります。
+ただし、特定の文字列を返すことやエラーを発生するようにすることはできます。
 
 ``` r
-## cause error because America is not in the list
+## return NA because America is not in the list
 volumeName("アメリカ", "トドマツ")
-#> Error in volumeNameSingle(Region, Spp, RS): No such region.
+#> ! `アメリカ` is not in the region list, return `NA`.
+#> [1] NA
 ```
 
 ``` r
 ## return specific string if the region does not much any one in the list
-volumeNameSingle("アメリカ", "トドマツ", name_invalid = "合致しない")
+volumeName("アメリカ", "トドマツ", name_invalid = "合致しない")
+#> ! `アメリカ` is not in the region list, return `合致しない`.
 #> [1] "合致しない"
+```
+
+``` r
+## cause error if you want
+volumeName("アメリカ", "トドマツ", stop_if_NA = T)
+#> Error in `volumeNameSingle()`:
+#> ✖ `アメリカ` is not in the region list. There are no such region.
 ```
 
 立木幹材積の計算はベクトルでも実行できます。
@@ -101,6 +110,34 @@ dt |>
 #> 3     東京     スギ 31.8 23.4     東京スギ 0.8597140
 #> 4   青森県 カラマツ 43.4 19.5 秋田カラマツ 1.3602628
 #> 5     熊本   ヒノキ 39.0 26.7   熊本ヒノキ 1.4668625
+```
+
+材積式名が有効でなかったり、DやHに`NA`を含む場合、`NA`を返します。
+`stop_if_NA = TRUE`とすることで、計算ができない場合エラーを発生するようにすることもできます。
+
+``` r
+dt <- data.frame(Region = c("宗谷支庁", "愛媛県", "東京", "青森県", "熊本", "南極"),
+                 Spp = c("トドマツ", "ヒノキ", "スギ", "カラマツ", "ヒノキ", "アザラシ"),
+                 D = c(21.8, 55.1, 31.8, 43.4, 39.0, Inf),
+                 H = c(NA, 22.7, -1.5, 19.5, 26.7, 1.5))
+dt |> 
+  dplyr::mutate(Name = volumeName(Region, Spp),
+                V = stemVolume(Name, D, H))
+#> ! `南極` is not in the region list, return `NA`.
+#> ! There are 1 NA/NaNs in Name.
+#> ! There are 1 NA/NaNs in H.
+#> ! There are 1 Inf/-Inf in D.
+#> ! There are 1 negative values (< 0) in H, adjusting to 0.
+#> ! There are Names that are not listed in this caclulation.
+#> ! `NA` is not in a list, use `stemv::volumeName()`.
+#> ! The calculation of V contatins 2 NA/NaNs.
+#>     Region      Spp    D    H         Name        V
+#> 1 宗谷支庁 トドマツ 21.8   NA 旭川トドマツ       NA
+#> 2   愛媛県   ヒノキ 55.1 22.7   高知ヒノキ 2.223054
+#> 3     東京     スギ 31.8 -1.5     東京スギ 0.000000
+#> 4   青森県 カラマツ 43.4 19.5 秋田カラマツ 1.360263
+#> 5     熊本   ヒノキ 39.0 26.7   熊本ヒノキ 1.466862
+#> 6     南極 アザラシ  Inf  1.5         <NA>       NA
 ```
 
 幹材積の計算では、細田ら(2010)の方法に従い必要な箇所は材積式の各接合部に移動平均を適用しています。
@@ -122,7 +159,12 @@ stemVolumeSingle("函館エゾマツ", 51, 25, off_adj = TRUE)
 purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
                  D = dt$D,
                  H = dt$H), stemVolumeSingle, off_adj = TRUE) |> unlist()
-#> [1] 0.2200923 2.2230540 0.8597140 1.3602628 1.4668625
+#> ! `南極` is not in the region list, return `NA`.
+#> ! H is NA/NaN.
+#> ! H is negative values (< 0), adjusting to 0.
+#> ! Name is NA/NaN.
+#> ! D is Inf/-Inf.
+#> [1]       NA 2.223054 0.000000 1.360263 1.466862       NA
 ```
 
 ## Differences from the calculation program (Excel version)
@@ -316,7 +358,7 @@ purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
 「立木幹材積表
 東日本編・西日本編」における幹材積表と比較すると以下の通りになります。
 
-- 小数点第2位を四捨五入して材積が一致しない組み合わせは全体の4.7%です。
+- 小数点第3位を四捨五入して材積が一致しない組み合わせは全体の4.7%です。
 - 誤差が0.01m<sup>3</sup>以上になる組み合わせは全体の1.2%です。
 
 <table>

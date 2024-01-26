@@ -58,7 +58,7 @@ volumeName(Region, Spp)
 ```
 
 `volumeName()`を利用する場合、樹種はカタカナで記入してください。漢字等にすると全て広葉樹になります。  
-ただし、`天然スギ`, `天然ヒノキ`, `広葉樹`, `針葉樹`は例外的に処理できます。
+ただし、`天然スギ`, `天然ヒノキ`, `天然アカマツ`, `広葉樹`, `針葉樹`などは例外的に処理できます。
 
 ```{r}
 ## correct
@@ -76,16 +76,20 @@ volumeName("福岡", "唐松")
 volumeName("東京", "バナナ")
 ```
 
-リストにない地域を指定した場合、エラーになります。
-ただし、特定の文字列を返すようにすることはできます。
+リストにない地域を指定した場合、`NA`になります。
+ただし、特定の文字列を返すことやエラーを発生するようにすることはできます。
 
-```{r error=TRUE}
-## cause error because America is not in the list
+```{r}
+## return NA because America is not in the list
 volumeName("アメリカ", "トドマツ")
 ```
 ```{r}
 ## return specific string if the region does not much any one in the list
-volumeNameSingle("アメリカ", "トドマツ", name_invalid = "合致しない")
+volumeName("アメリカ", "トドマツ", name_invalid = "合致しない")
+```
+```{r error=TRUE}
+## cause error if you want
+volumeName("アメリカ", "トドマツ", stop_if_NA = T)
 ```
 
 立木幹材積の計算はベクトルでも実行できます。
@@ -95,6 +99,19 @@ dt <- data.frame(Region = c("宗谷支庁", "愛媛県", "東京", "青森県", 
                  Spp = c("トドマツ", "ヒノキ", "スギ", "カラマツ", "ヒノキ"),
                  D = c(21.8, 55.1, 31.8, 43.4, 39.0),
                  H = c(11.4, 22.7, 23.4, 19.5, 26.7))
+dt |> 
+  dplyr::mutate(Name = volumeName(Region, Spp),
+                V = stemVolume(Name, D, H))
+```
+
+材積式名が有効でなかったり、DやHに`NA`を含む場合、`NA`を返します。
+`stop_if_NA = TRUE`とすることで、計算ができない場合エラーを発生するようにすることもできます。
+
+```{r}
+dt <- data.frame(Region = c("宗谷支庁", "愛媛県", "東京", "青森県", "熊本", "南極"),
+                 Spp = c("トドマツ", "ヒノキ", "スギ", "カラマツ", "ヒノキ", "アザラシ"),
+                 D = c(21.8, 55.1, 31.8, 43.4, 39.0, Inf),
+                 H = c(NA, 22.7, -1.5, 19.5, 26.7, 1.5))
 dt |> 
   dplyr::mutate(Name = volumeName(Region, Spp),
                 V = stemVolume(Name, D, H))
@@ -147,7 +164,7 @@ kableExtra::kable(list_data_for_readme[[7]] |> dplyr::filter(`差≥0.0001の数
 
 「立木幹材積表 東日本編・西日本編」における幹材積表と比較すると以下の通りになります。
 
-- 小数点第2位を四捨五入して材積が一致しない組み合わせは全体の`r round(100*list_data_for_readme[[5]]/list_data_for_readme[[4]], 1)`%です。
+- 小数点第3位を四捨五入して材積が一致しない組み合わせは全体の`r round(100*list_data_for_readme[[5]]/list_data_for_readme[[4]], 1)`%です。
 - 誤差が0.01m<sup>3</sup>以上になる組み合わせは全体の`r round(100*list_data_for_readme[[6]]/list_data_for_readme[[4]], 1)`%です。
 
 ```{r, echo=FALSE}
