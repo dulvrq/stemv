@@ -14,7 +14,15 @@ This is expected from \code{\link[=volumeName]{volumeName()}}.}
 
 \item{H}{Numeric. Tree height in m.}
 
-\item{...}{Additional arguments. \code{list_data} and \code{adjust_to_excel} are supported.}
+\item{...}{Additional arguments.
+
+These can be:
+\itemize{
+\item \code{stop_if_NA}: logical. If TRUE, cause error when NAs/NaNs/Inf/-Inf are provided for \code{Name}/\code{D}/\code{H};
+otherwise return NAs.
+\item \code{list_data}: data from \code{\link[=getStemCoefficientsRound]{getStemCoefficientsRound()}} if preferred.
+\item \code{adjust_to_excel}: logical. Calculate volume in the same way as program.
+}}
 }
 \value{
 Calculated stem volume
