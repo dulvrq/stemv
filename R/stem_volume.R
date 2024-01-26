@@ -783,25 +783,25 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
           v2 <- 0.247459 * H + 0.2424
           V <- linearImpute(90, v1, 92, v2, D)
         }
-        if(Name == "札幌トドマツ" & any(D >= 92 & D < 94)){
+        if(Name == "札幌トドマツ" & D >= 92 & D < 94){
           wch_replace <- which(D >= 92 & D < 94)
           v1 <- 0.247459 * H + 0.2424
           v2 <- 0.259188 * H + 0.2648
           V  <- linearImpute(92, v1, 94, v2, D)
         }
-        if(Name == "札幌トドマツ" & any(D >= 94 & D < 96)){
+        if(Name == "札幌トドマツ" & D >= 94 & D < 96){
           wch_replace <- which(D >= 94 & D < 96)
           v1 <- 0.259188 * H + 0.2648
           v2 <- 0.274247 * H + 0.2993
           V  <- linearImpute(94, v1, 96, v2, D)
         }
-        if(Name == "札幌トドマツ" & any(D >= 96 & D < 98)){
+        if(Name == "札幌トドマツ" & D >= 96 & D < 98){
           wch_replace <- which(D >= 96 & D < 98)
           v1 <- 0.274247 * H + 0.2993
           v2 <- 0.290558 * H + 0.3324
           V  <- linearImpute(96, v1, 98, v2, D)
         }
-        if(Name == "札幌トドマツ" & any(D >= 98 & D < 100)){
+        if(Name == "札幌トドマツ" & D >= 98 & D < 100){
           wch_replace <- which(D >= 98 & D < 100)
           v1 <- 0.290558 * H + 0.3324
           v2 <- calcStemVolumeAdj(dt_stem_s, 100, H, eq_type = 1, adj = "5w") # use revised coef
@@ -814,92 +814,92 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
         #   v2 <- 0.253714 * H + 0.1063
         #   V  <- linearImpute(94, v1, 96, v2, D)
         # }
-        if(Name == "高知天然スギ" & any(D >= 96 & D < 98 & H < 21.5)){
+        if(Name == "高知天然スギ" & D >= 96 & D < 98 & H < 21.5){
           wch_replace <- which(D >= 96 & D < 98 & H < 21.5)
           v1 <- 0.253714 * H + 0.1063
           v2 <- calcStemVolumeAdj(dt_stem_i, 98, H, eq_type = 1, adj = "5w")
           V  <- linearImpute(96, v1, 98, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 96 & D < 98 & H >= 29.5)){
+        if(Name == "高知天然スギ" & D >= 96 & D < 98 & H >= 29.5){
           wch_replace <- which(D >= 96 & D < 98 & H >= 29.5)
           v1 <- calcStemVolumeAdj(dt_stem_i, 96, H, eq_type = 1, adj = "5w")
           v2 <- 0.249273 * H + 0.4434
           V  <- linearImpute(96, v1, 98, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 98 & D < 100 & H >= 29.5)){
+        if(Name == "高知天然スギ" & D >= 98 & D < 100 & H >= 29.5){
           wch_replace <- which(D >= 98 & D < 100 & H >= 29.5)
           v1 <- 0.249273 * H + 0.4434
           v2 <- 0.269714 * H + 0.1319
           V  <- linearImpute(98, v1, 100, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 100 & D < 102 & H >= 29.5)){
+        if(Name == "高知天然スギ" & D >= 100 & D < 102 & H >= 29.5){
           wch_replace <- which(D >= 100 & D < 102 & H >= 29.5)
           v1 <- 0.269714 * H + 0.1319
           v2 <- calcStemVolumeAdj(dt_stem_i, 102, H, eq_type = 1, adj = "5w")
           V  <- linearImpute(100, v1, 102, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 102 & D < 104)){
+        if(Name == "高知天然スギ" & D >= 102 & D < 104){
           wch_replace <- which(D >= 102 & D < 104)
           v1 <- calcStemVolumeAdj(dt_stem_i, 102, H, eq_type = 1, adj = "5w")
           v2 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
           V  <- linearImpute(102, v1, 104, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 104 & D < 106 & H < 22.5)){
+        if(Name == "高知天然スギ" & D >= 104 & D < 106 & H < 22.5){
           wch_replace <- which(D >= 104 & D < 106 & H < 22.5)
           v1 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
           v2 <- 0.314 * H - 0.467
           V  <- linearImpute(104, v1, 106, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 104 & D < 106 & H >= 22.5 & H < 39.5)){
+        if(Name == "高知天然スギ" & D >= 104 & D < 106 & H >= 22.5 & H < 39.5){
           wch_replace <- which(D >= 104 & D < 106 & H >= 22.5 & H < 39.5)
           v1 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
           v2 <- calcStemVolumeAdj(dt_stem_i, 106, H, eq_type = 1, adj = "5w")
           V  <- linearImpute(104, v1, 106, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 104 & D < 106 & H >= 39.5)){
+        if(Name == "高知天然スギ" & D >= 104 & D < 106 & H >= 39.5){
           wch_replace <- which(D >= 104 & D < 106 & H >= 39.5)
           v1 <- 0.0007 * H^2 + 0.2739 * H - 0.0732
           v2 <- 0.354 * H - 1.7846
           V  <- linearImpute(104, v1, 106, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 106 & D < 108 & H < 22.5)){
+        if(Name == "高知天然スギ" & D >= 106 & D < 108 & H < 22.5){
           wch_replace <- which(D >= 106 & D < 108 & H < 22.5)
           v1 <- 0.314 * H - 0.467
           v2 <- 0.327 * H - 0.636
           V  <- linearImpute(106, v1, 108, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 106 & D < 108 &  H >= 22.5 & H < 39.5)){
+        if(Name == "高知天然スギ" & D >= 106 & D < 108 &  H >= 22.5 & H < 39.5){
           wch_replace <- which(D >= 106 & D < 108 &  H >= 22.5 & H < 39.5)
           v1 <- calcStemVolumeAdj(dt_stem_i, 106, H, eq_type = 1, adj = "5w")
           v2 <- calcStemVolumeAdj(dt_stem_i, 108, H, eq_type = 1, adj = "5w")
           V  <- linearImpute(106, v1, 108, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 106 & D < 108 & H >= 39.5)){
+        if(Name == "高知天然スギ" & D >= 106 & D < 108 & H >= 39.5){
           wch_replace <- which(D >= 106 & D < 108 & H >= 39.5)
           v1 <- 0.354 * H - 1.7846
           v2 <- calcStemVolumeAdj(dt_stem_i, 108, H, eq_type = 1, adj = "5w")
           V  <- linearImpute(106, v1, 108, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 108 & D < 110 & H < 22.5)){
+        if(Name == "高知天然スギ" & D >= 108 & D < 110 & H < 22.5){
           wch_replace <- which(D >= 108 & D < 110 & H < 22.5)
           v1 <- 0.327 * H - 0.636
           v2 <- calcStemVolumeAdj(dt_stem_i, 110, H, eq_type = 1, adj = "5w")
           V  <- linearImpute(108, v1, 110, v2, D)
         }
-        if(Name == "高知天然スギ" & any(D >= 108 & D < 110 & H >= 22.5)){
+        if(Name == "高知天然スギ" & D >= 108 & D < 110 & H >= 22.5){
           wch_replace <- which(D >= 108 & D < 110 & H >= 22.5)
           v1 <- calcStemVolumeAdj(dt_stem_i, 108, H, eq_type = 1, adj = "5w")
           v2 <- calcStemVolumeAdj(dt_stem_i, 110, H, eq_type = 1, adj = "5w")
           V  <- linearImpute(108, v1, 110, v2, D)
         }
         ### 3) Aomori Akamatsu
-        if(Name == "青森アカマツ" & any(D > 38 & D <= 46)){
+        if(Name == "青森アカマツ" & D > 38 & D <= 46){
           wch_replace <- which(D > 38 & D <= 46)
           v1 <- calcStemVolumeAdj(dt_stem_i, 38, H, eq_type = 1, adj = "None")
           v2 <- calcStemVolumeAdj(dt_stem_i, 46, H, eq_type = 1, adj = "3w")
           V  <- linearImpute(38, v1, 46, v2, D)
         }
-        if(Name == "青森アカマツ" & any(D > 46 & D < 56)){
+        if(Name == "青森アカマツ" & D > 46 & D < 56){
           wch_replace <- which(D > 46 & D < 56)
           v1 <- calcStemVolumeAdj(dt_stem_i, 46, H, eq_type = 1, adj = "3w")
           v2 <- calcStemVolumeAdj(dt_stem_i, 56, H, eq_type = 1, adj = "None")
@@ -1128,86 +1128,86 @@ stemVolume <- function(Name, D, H, ...){
       }
 
       ## special adjustment -----
-      if(ls_Name[i] == "上屋久天然スギ" & any(D_i >= 61)){
+      if(ls_Name[i] == "上屋久天然スギ" & any(D_i >= 61, na.rm = T)){
         wch_replace <- which(D_i >= 61)
         V_i[wch_replace] = 0.1513 + 0.8898 * V_i[wch_replace]
       }
-      if(ls_Name[i] == "上屋久天然スギ" & any(abs(D_i - 61) < 5)){
+      if(ls_Name[i] == "上屋久天然スギ" & any(abs(D_i - 61) < 5, na.rm = T)){
         dt_stem_s <- dt_stem_i |> rbind(dt_stem_i[2,]) |> arrange(D_lower)
         dt_stem_s$D_upper[2] <- 61
         dt_stem_s$D_lower[3] <- 61
         wch_replace <- which(abs(D_i - 61) < 5)
         V_i[wch_replace] = calcStemVolumeMulti(dt_stem_s, D_i[wch_replace], H_i[wch_replace], eq_type = 5, adj = "5w")
       }
-      if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 95)){
+      if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 95, na.rm = T)){
         dt_stem_s <- dt_stem |> filter(name == "札幌トドマツ") |> tail(1) |> mutate(D_upper = 95) |>
           rbind(dt_stem |> filter(name == "札幌エゾマツ") |> tail(1) |> mutate(D_lower = 95))
         wch_replace <- which(D_i >= 95)
         V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_s, D_i[wch_replace], H_i[wch_replace], eq_type = 1, adj = "5w")
       }
-      if(ls_Name[i] == "札幌トドマツ" & any(abs(D_i - 95) < 5)){
+      if(ls_Name[i] == "札幌トドマツ" & any(abs(D_i - 95) < 5, na.rm = T)){
         dt_stem_s <- dt_stem |> filter(name == "札幌トドマツ") |> tail(1) |> mutate(D_upper = 95) |>
           rbind(dt_stem |> filter(name == "札幌エゾマツ") |> tail(1) |> mutate(D_lower = 95))
         wch_replace <- which(abs(D_i - 95) < 5)
         V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_s, D_i[wch_replace], H_i[wch_replace], eq_type = 1, adj = "5w")
       }
-      if(ls_Name[i] == "青森アカマツ" & any(abs(D_i - 47) < 5)){
+      if(ls_Name[i] == "青森アカマツ" & any(abs(D_i - 47) < 5, na.rm = T)){
         wch_replace <- which(abs(D_i - 47) < 5)
         V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 1, adj = "5w")
       }
-      if(ls_Name[i] == "青森広葉樹" & any(abs(D_i - 71) < 5)){
+      if(ls_Name[i] == "青森広葉樹" & any(abs(D_i - 71) < 5, na.rm = T)){
         wch_replace <- which(abs(D_i - 71) < 5)
         V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 1, adj = "5w")
       }
-      if(ls_Name[i] == "高知天然スギ" & any(abs(D_i - 101) < 5)){
+      if(ls_Name[i] == "高知天然スギ" & any(abs(D_i - 101) < 5, na.rm = T)){
         wch_replace <- which(abs(D_i - 101) < 5)
         V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 1, adj = "5w")
       }
-      if(ls_Name[i] == "高知広葉樹" & any(abs(D_i - 61) < 5)){
+      if(ls_Name[i] == "高知広葉樹" & any(abs(D_i - 61) < 5, na.rm = T)){
         wch_replace <- which(abs(D_i - 61) < 5)
         V_i[wch_replace] <- calcStemVolumeMulti(dt_stem_i, D_i[wch_replace], H_i[wch_replace], eq_type = 2, adj = "5w")
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i < 11.5 & D_i >= 36 & D_i <= 70)){
+      if(ls_Name[i] == "東京スギ" & any(H_i < 11.5 & D_i >= 36 & D_i <= 70, na.rm = T)){
         wch_replace <- which(H_i < 11.5 & D_i >= 36 & D_i <= 70)
         V_i[wch_replace] <- linearImputeVolume(dt_stem_i, 36, 70, D_i[wch_replace], H_i[wch_replace], eq_type = 1)
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 11.5 & H_i < 12.5 & D_i >= 36 & D_i <= 68)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 11.5 & H_i < 12.5 & D_i >= 36 & D_i <= 68, na.rm = T)){
         wch_replace <- which(H_i >= 11.5 & H_i < 12.5 & D_i >= 36 & D_i <= 68)
         V_i[wch_replace] <- linearImputeVolume(dt_stem_i, 36, 68, D_i[wch_replace], H_i[wch_replace], eq_type = 1)
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 12.5 & H_i < 14.5 & D_i >= 36 & D_i <= 62)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 12.5 & H_i < 14.5 & D_i >= 36 & D_i <= 62, na.rm = T)){
         wch_replace <- which(H_i >= 12.5 & H_i < 14.5 & D_i >= 36 & D_i <= 62)
         V_i[wch_replace] <- linearImputeVolume(dt_stem_i, 36, 62, D_i[wch_replace], H_i[wch_replace], eq_type = 1)
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 14.5 & H_i < 16.5 & D_i >= 36 & D_i <= 60)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 14.5 & H_i < 16.5 & D_i >= 36 & D_i <= 60, na.rm = T)){
         wch_replace <- which(H_i >= 14.5 & H_i < 16.5 & D_i >= 36 & D_i <= 60)
         V_i[wch_replace] <- linearImputeVolume(dt_stem_i, 36, 60, D_i[wch_replace], H_i[wch_replace], eq_type = 1)
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 16.5 & H_i < 18.5 & D_i >= 40 & D_i <= 60)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 16.5 & H_i < 18.5 & D_i >= 40 & D_i <= 60, na.rm = T)){
         wch_replace <- which(H_i >= 16.5 & H_i < 18.5 & D_i >= 40 & D_i <= 60)
         v1 <- calcStemVolumeMulti(dt_stem_i, 40, H_i[wch_replace], eq_type = 1, adj = "3w")
         v2 <- calcStemVolumeMulti(dt_stem_i, 60, H_i[wch_replace], eq_type = 1, adj = "None")
         V_i[wch_replace]  <- linearImpute(40, v1, 60, v2, D_i[wch_replace])
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 18.5 & H_i < 19.5 & D_i >= 40 & D_i <= 58)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 18.5 & H_i < 19.5 & D_i >= 40 & D_i <= 58, na.rm = T)){
         wch_replace <- which(H_i >= 18.5 & H_i < 19.5 & D_i >= 40 & D_i <= 58)
         v1 <- calcStemVolumeMulti(dt_stem_i, 40, H_i[wch_replace], eq_type = 1, adj = "3w")
         v2 <- calcStemVolumeMulti(dt_stem_i, 58, H_i[wch_replace], eq_type = 1, adj = "None")
         V_i[wch_replace]  <- linearImpute(40, v1, 58, v2, D_i[wch_replace])
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 19.5 & H_i < 20.5 & D_i >= 40 & D_i <= 54)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 19.5 & H_i < 20.5 & D_i >= 40 & D_i <= 54, na.rm = T)){
         wch_replace <- which(H_i >= 19.5 & H_i < 20.5 & D_i >= 40 & D_i <= 54)
         v1 <- calcStemVolumeMulti(dt_stem_i, 40, H_i[wch_replace], eq_type = 1, adj = "3w")
         v2 <- calcStemVolumeMulti(dt_stem_i, 54, H_i[wch_replace], eq_type = 1, adj = "None")
         V_i[wch_replace]  <- linearImpute(40, v1, 54, v2, D_i[wch_replace])
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 20.5 & H_i < 21.5 & D_i >= 40 & D_i <= 52)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 20.5 & H_i < 21.5 & D_i >= 40 & D_i <= 52, na.rm = T)){
         wch_replace <- which(H_i >= 20.5 & H_i < 21.5 & D_i >= 40 & D_i <= 52)
         v1 <- calcStemVolumeMulti(dt_stem_i, 40, H_i[wch_replace], eq_type = 1, adj = "3w")
         v2 <- calcStemVolumeMulti(dt_stem_i, 52, H_i[wch_replace], eq_type = 1, adj = "None")
         V_i[wch_replace]  <- linearImpute(40, v1, 52, v2, D_i[wch_replace])
       }
-      if(ls_Name[i] == "東京スギ" & any(H_i >= 21.5 & H_i < 22.5 & D_i >= 40 & D_i <= 50)){
+      if(ls_Name[i] == "東京スギ" & any(H_i >= 21.5 & H_i < 22.5 & D_i >= 40 & D_i <= 50, na.rm = T)){
         wch_replace <- which(H_i >= 21.5 & H_i < 22.5 & D_i >= 40 & D_i <= 50)
         v1 <- calcStemVolumeMulti(dt_stem_i, 40, H_i[wch_replace], eq_type = 1, adj = "3w")
         v2 <- calcStemVolumeMulti(dt_stem_i, 50, H_i[wch_replace], eq_type = 1, adj = "None")
@@ -1216,33 +1216,33 @@ stemVolume <- function(Name, D, H, ...){
 
       ## adjustment to those in the calculation program (Excel ver)
       ## this is a tentative code. Require "adjust_to_excel" in ellipsis.
-      if("adjust_to_excel" %in% names(list(...)) && list(...)["adjust_to_excel"] == TRUE){
+      if("adjust_to_excel" %in% names(list(...)) && list(...)[["adjust_to_excel"]] == TRUE){
         ### 1) Sapporo Todomatsu
-        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 90 & D_i < 92)){
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 90 & D_i < 92, na.rm = T)){
           wch_replace <- which(D_i >= 90 & D_i < 92)
           v1 <- calcStemVolumeMulti(dt_stem_i, 90, H_i[wch_replace], eq_type = 1, adj = "3w")
           v2 <- 0.247459 * H_i[wch_replace] + 0.2424
           V_i[wch_replace]  <- linearImpute(90, v1, 92, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 92 & D_i < 94)){
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 92 & D_i < 94, na.rm = T)){
           wch_replace <- which(D_i >= 92 & D_i < 94)
           v1 <- 0.247459 * H_i[wch_replace] + 0.2424
           v2 <- 0.259188 * H_i[wch_replace] + 0.2648
           V_i[wch_replace]  <- linearImpute(92, v1, 94, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 94 & D_i < 96)){
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 94 & D_i < 96, na.rm = T)){
           wch_replace <- which(D_i >= 94 & D_i < 96)
           v1 <- 0.259188 * H_i[wch_replace] + 0.2648
           v2 <- 0.274247 * H_i[wch_replace] + 0.2993
           V_i[wch_replace]  <- linearImpute(94, v1, 96, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 96 & D_i < 98)){
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 96 & D_i < 98, na.rm = T)){
           wch_replace <- which(D_i >= 96 & D_i < 98)
           v1 <- 0.274247 * H_i[wch_replace] + 0.2993
           v2 <- 0.290558 * H_i[wch_replace] + 0.3324
           V_i[wch_replace]  <- linearImpute(96, v1, 98, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 98 & D_i < 100)){
+        if(ls_Name[i] == "札幌トドマツ" & any(D_i >= 98 & D_i < 100, na.rm = T)){
           wch_replace <- which(D_i >= 98 & D_i < 100)
           v1 <- 0.290558 * H_i[wch_replace] + 0.3324
           v2 <- calcStemVolumeMulti(dt_stem_s, 100, H_i[wch_replace], eq_type = 1, adj = "5w") # use revised coef
@@ -1255,92 +1255,92 @@ stemVolume <- function(Name, D, H, ...){
         #   v2 <- 0.253714 * H_i[wch_replace] + 0.1063
         #   V_i[wch_replace]  <- linearImpute(94, v1, 96, v2, D_i[wch_replace])
         # }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 96 & D_i < 98 & H_i < 21.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 96 & D_i < 98 & H_i < 21.5, na.rm = T)){
           wch_replace <- which(D_i >= 96 & D_i < 98 & H_i < 21.5)
           v1 <- 0.253714 * H_i[wch_replace] + 0.1063
           v2 <- calcStemVolumeMulti(dt_stem_i, 98, H_i[wch_replace], eq_type = 1, adj = "5w")
           V_i[wch_replace]  <- linearImpute(96, v1, 98, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 96 & D_i < 98 & H_i >= 29.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 96 & D_i < 98 & H_i >= 29.5, na.rm = T)){
           wch_replace <- which(D_i >= 96 & D_i < 98 & H_i >= 29.5)
           v1 <- calcStemVolumeMulti(dt_stem_i, 96, H_i[wch_replace], eq_type = 1, adj = "5w")
           v2 <- 0.249273 * H_i[wch_replace] + 0.4434
           V_i[wch_replace]  <- linearImpute(96, v1, 98, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 98 & D_i < 100 & H_i >= 29.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 98 & D_i < 100 & H_i >= 29.5, na.rm = T)){
           wch_replace <- which(D_i >= 98 & D_i < 100 & H_i >= 29.5)
           v1 <- 0.249273 * H_i[wch_replace] + 0.4434
           v2 <- 0.269714 * H_i[wch_replace] + 0.1319
           V_i[wch_replace]  <- linearImpute(98, v1, 100, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 100 & D_i < 102 & H_i >= 29.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 100 & D_i < 102 & H_i >= 29.5, na.rm = T)){
           wch_replace <- which(D_i >= 100 & D_i < 102 & H_i >= 29.5)
           v1 <- 0.269714 * H_i[wch_replace] + 0.1319
           v2 <- calcStemVolumeMulti(dt_stem_i, 102, H_i[wch_replace], eq_type = 1, adj = "5w")
           V_i[wch_replace]  <- linearImpute(100, v1, 102, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 102 & D_i < 104)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 102 & D_i < 104, na.rm = T)){
           wch_replace <- which(D_i >= 102 & D_i < 104)
           v1 <- calcStemVolumeMulti(dt_stem_i, 102, H_i[wch_replace], eq_type = 1, adj = "5w")
           v2 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
           V_i[wch_replace]  <- linearImpute(102, v1, 104, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i < 22.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i < 22.5, na.rm = T)){
           wch_replace <- which(D_i >= 104 & D_i < 106 & H_i < 22.5)
           v1 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
           v2 <- 0.314 * H_i[wch_replace] - 0.467
           V_i[wch_replace]  <- linearImpute(104, v1, 106, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i >= 22.5 & H_i < 39.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i >= 22.5 & H_i < 39.5, na.rm = T)){
           wch_replace <- which(D_i >= 104 & D_i < 106 & H_i >= 22.5 & H_i < 39.5)
           v1 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
           v2 <- calcStemVolumeMulti(dt_stem_i, 106, H_i[wch_replace], eq_type = 1, adj = "5w")
           V_i[wch_replace]  <- linearImpute(104, v1, 106, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i >= 39.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 104 & D_i < 106 & H_i >= 39.5, na.rm = T)){
           wch_replace <- which(D_i >= 104 & D_i < 106 & H_i >= 39.5)
           v1 <- 0.0007 * H_i[wch_replace]^2 + 0.2739 * H_i[wch_replace] - 0.0732
           v2 <- 0.354 * H_i[wch_replace] - 1.7846
           V_i[wch_replace]  <- linearImpute(104, v1, 106, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 & H_i < 22.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 & H_i < 22.5, na.rm = T)){
           wch_replace <- which(D_i >= 106 & D_i < 108 & H_i < 22.5)
           v1 <- 0.314 * H_i[wch_replace] - 0.467
           v2 <- 0.327 * H_i[wch_replace] - 0.636
           V_i[wch_replace]  <- linearImpute(106, v1, 108, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 &  H_i >= 22.5 & H_i < 39.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 &  H_i >= 22.5 & H_i < 39.5, na.rm = T)){
           wch_replace <- which(D_i >= 106 & D_i < 108 &  H_i >= 22.5 & H_i < 39.5)
           v1 <- calcStemVolumeMulti(dt_stem_i, 106, H_i[wch_replace], eq_type = 1, adj = "5w")
           v2 <- calcStemVolumeMulti(dt_stem_i, 108, H_i[wch_replace], eq_type = 1, adj = "5w")
           V_i[wch_replace]  <- linearImpute(106, v1, 108, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 & H_i >= 39.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 106 & D_i < 108 & H_i >= 39.5, na.rm = T)){
           wch_replace <- which(D_i >= 106 & D_i < 108 & H_i >= 39.5)
           v1 <- 0.354 * H_i[wch_replace] - 1.7846
           v2 <- calcStemVolumeMulti(dt_stem_i, 108, H_i[wch_replace], eq_type = 1, adj = "5w")
           V_i[wch_replace]  <- linearImpute(106, v1, 108, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 108 & D_i < 110 & H_i < 22.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 108 & D_i < 110 & H_i < 22.5, na.rm = T)){
           wch_replace <- which(D_i >= 108 & D_i < 110 & H_i < 22.5)
           v1 <- 0.327 * H_i[wch_replace] - 0.636
           v2 <- calcStemVolumeMulti(dt_stem_i, 110, H_i[wch_replace], eq_type = 1, adj = "5w")
           V_i[wch_replace]  <- linearImpute(108, v1, 110, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 108 & D_i < 110 & H_i >= 22.5)){
+        if(ls_Name[i] == "高知天然スギ" & any(D_i >= 108 & D_i < 110 & H_i >= 22.5, na.rm = T)){
           wch_replace <- which(D_i >= 108 & D_i < 110 & H_i >= 22.5)
           v1 <- calcStemVolumeMulti(dt_stem_i, 108, H_i[wch_replace], eq_type = 1, adj = "5w")
           v2 <- calcStemVolumeMulti(dt_stem_i, 110, H_i[wch_replace], eq_type = 1, adj = "5w")
           V_i[wch_replace]  <- linearImpute(108, v1, 110, v2, D_i[wch_replace])
         }
         ### 3) Aomori Akamatsu
-        if(ls_Name[i] == "青森アカマツ" & any(D_i > 38 & D_i <= 46)){
+        if(ls_Name[i] == "青森アカマツ" & any(D_i > 38 & D_i <= 46, na.rm = T)){
           wch_replace <- which(D_i > 38 & D_i <= 46)
           v1 <- calcStemVolumeMulti(dt_stem_i, 38, H_i[wch_replace], eq_type = 1, adj = "None")
           v2 <- calcStemVolumeMulti(dt_stem_i, 46, H_i[wch_replace], eq_type = 1, adj = "3w")
           V_i[wch_replace]  <- linearImpute(38, v1, 46, v2, D_i[wch_replace])
         }
-        if(ls_Name[i] == "青森アカマツ" & any(D_i > 46 & D_i < 56)){
+        if(ls_Name[i] == "青森アカマツ" & any(D_i > 46 & D_i < 56, na.rm = T)){
           wch_replace <- which(D_i > 46 & D_i < 56)
           v1 <- calcStemVolumeMulti(dt_stem_i, 46, H_i[wch_replace], eq_type = 1, adj = "3w")
           v2 <- calcStemVolumeMulti(dt_stem_i, 56, H_i[wch_replace], eq_type = 1, adj = "None")
@@ -1461,8 +1461,12 @@ stemVolume <- function(Name, D, H, ...){
 #'   Please see the original article by Hosoda et al. (2010) and description in the above program.
 #' @param RS  A list of parameters, which is generated by [getRegionName()].
 #'   List names should be strictly the same as one generated by [getRegionName()] to derive the correct parameters.
-#' @param name_invalid  Character to determine the behavior when invalid region name is provided for `Region`.
-#'   If NULL, cause error with message. If character string provided, return that string for invalid ones.
+#' @param ...  Additional arguments. `name_invalid` and `stop_if_NA` are supported.
+#'
+#'  These can be:
+#'  * `stop_if_NA`: logical. If TRUE, cause error when NAs/NaNs/NULL or other invalid region name is provided for `Region`.
+#'  * `name_invalid`: character (or NA/NULL), which is used as return when invalid region name is provided for `Region`.
+#'   This is not used if `stop_if_NA` is `TRUE`.
 #' @return  Name for identifying and calculating stem volume in [stemVolume()]
 #'
 #' @importFrom dplyr %>% filter mutate group_by summarize
@@ -1470,7 +1474,19 @@ stemVolume <- function(Name, D, H, ...){
 #' @importFrom stringi stri_trans_general
 #' @export
 
-volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
+volumeNameSingle <- function(Region, Spp, RS = NULL, ...){
+  # determine returns for NAs & invalid names provided
+  if("name_invalid" %in% names(list(...))){
+    name_invalid <- list(...)[["name_invalid"]]
+  } else {
+    name_invalid <- NA  # return NA by default
+  }
+  if("stop_if_NA" %in% names(list(...))){
+    stop_if_NA <- list(...)[["stop_if_NA"]]
+  } else {
+    stop_if_NA <- FALSE  # do not cause error if NA by default
+  }
+
   # prepare for Region ---
   name_region <- Region
   name_region <- str_replace(name_region, "(府|県)$", "")
@@ -1804,7 +1820,7 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
       stop("No such species in this region.")
     }
   } else {
-    if(is.null(name_invalid)){
+    if(stop_if_NA){
       stop("No such region.")
     } else {
       name_RS <- name_invalid
@@ -1833,27 +1849,33 @@ volumeNameSingle <- function(Region, Spp, RS = NULL, name_invalid = NULL){
 #'   Please see the original article by Hosoda et al. (2010) and description in the above program.
 #' @param RS  A list of parameters, which is generated by [getRegionName()].
 #'   list names should be strictly the same as one generated by [getRegionName()] to derive the correct parameters.
+#' @param ...  Additional arguments. `name_invalid` and `stop_if_NA` are supported.
+#'
+#'  These can be:
+#'  * `stop_if_NA`: logical. If TRUE, cause error when NAs/NaNs/NULL or other invalid region name is provided for `Region`.
+#'  * `name_invalid`: character (or NA/NULL), which is used as return when invalid region name is provided for `Region`.
+#'   This is not used if `stop_if_NA` is `TRUE`.
 #' @return Name for identifying and calculating stem volume in [stemVolume()]
 #'
 #' @importFrom purrr pmap
 #' @importFrom dplyr %>% filter mutate group_by summarize
 #' @export
 #'
-volumeName <- function(Region, Spp, RS = NULL){
+volumeName <- function(Region, Spp, RS = NULL, ...){
   # for single value ---
   if(length(Region) == 1 & length(Spp) == 1){
-    Name <- volumeNameSingle(Region, Spp, RS)
+    Name <- volumeNameSingle(Region, Spp, RS, ...)
 
   # for multiple values ---
   } else {
     ## get parameters for Region & Name ---
-    if(is.null(RS)) RS <- getRegionName()
+    # if(is.null(RS)) RS <- getRegionName()
     ## unique combinations of Region & Spp ---
     dt_comb <- data.frame(Region = Region, Spp = Spp) |>
       group_by(Region, Spp) |>
       summarize(.groups = "drop")
     ## get Name for each unique comb. ---
-    Name_comb <- pmap(dt_comb, volumeNameSingle, name_invalid = NULL)
+    Name_comb <- pmap(dt_comb, volumeNameSingle, RS, c(...))
     ## allocate to each Region & Spp ---
     Name <- factor(paste0(Region, Spp),
                    levels = paste0(dt_comb$Region, dt_comb$Spp),
