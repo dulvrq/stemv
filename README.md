@@ -116,16 +116,16 @@ dt |>
 `stop_if_NA = TRUE`とすることで、計算ができない場合エラーを発生するようにすることもできます。
 
 ``` r
-dt <- data.frame(Region = c("宗谷支庁", "愛媛県", "東京", "青森県", "熊本", "南極"),
+dt2 <- data.frame(Region = c("宗谷支庁", "愛媛県", "東京", "青森県", "熊本", "南極"),
                  Spp = c("トドマツ", "ヒノキ", "スギ", "カラマツ", "ヒノキ", "アザラシ"),
                  D = c(21.8, 55.1, 31.8, 43.4, 39.0, Inf),
-                 H = c(NA, 22.7, -1.5, 19.5, 26.7, 1.5))
-dt |> 
+                 H = c(NA, 22.7, -1.5, 19.5, 26.7, NA))
+dt2 |> 
   dplyr::mutate(Name = volumeName(Region, Spp),
                 V = stemVolume(Name, D, H))
 #> ! `南極` is not in the region list, return `NA`.
 #> ! There are 1 NA/NaNs in Name.
-#> ! There are 1 NA/NaNs in H.
+#> ! There are 2 NA/NaNs in H.
 #> ! There are 1 Inf/-Inf in D.
 #> ! There are 1 negative values (< 0) in H, adjusting to 0.
 #> ! There are Names that are not listed in this caclulation.
@@ -137,7 +137,7 @@ dt |>
 #> 3     東京     スギ 31.8 -1.5     東京スギ 0.000000
 #> 4   青森県 カラマツ 43.4 19.5 秋田カラマツ 1.360263
 #> 5     熊本   ヒノキ 39.0 26.7   熊本ヒノキ 1.466862
-#> 6     南極 アザラシ  Inf  1.5         <NA>       NA
+#> 6     南極 アザラシ  Inf   NA         <NA>       NA
 ```
 
 幹材積の計算では、細田ら(2010)の方法に従い必要な箇所は材積式の各接合部に移動平均を適用しています。
@@ -159,12 +159,7 @@ stemVolumeSingle("函館エゾマツ", 51, 25, off_adj = TRUE)
 purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
                  D = dt$D,
                  H = dt$H), stemVolumeSingle, off_adj = TRUE) |> unlist()
-#> ! `南極` is not in the region list, return `NA`.
-#> ! H is NA/NaN.
-#> ! H is negative values (< 0), adjusting to 0.
-#> ! Name is NA/NaN.
-#> ! D is Inf/-Inf.
-#> [1]       NA 2.223054 0.000000 1.360263 1.466862       NA
+#> [1] 0.2200923 2.2230540 0.8597140 1.3602628 1.4668625
 ```
 
 ## Differences from the calculation program (Excel version)
