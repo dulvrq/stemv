@@ -112,6 +112,12 @@ dt |>
 #> 5     熊本   ヒノキ 39.0 26.7   熊本ヒノキ 1.4668625
 ```
 
+``` r
+## the same as above results
+stemVolume(volumeName(dt$Region, dt$Spp), dt$D, dt$H)
+#> [1] 0.2287186 2.2230540 0.8597140 1.3602628 1.4668625
+```
+
 材積式名が有効でなかったり、DやHに`NA`を含む場合、`NA`を返します。
 `stop_if_NA = TRUE`とすることで、計算ができない場合エラーを発生するようにすることもできます。
 
@@ -127,6 +133,7 @@ dt2 |>
 #> ! There are 1 NA/NaNs in Name.
 #> ! There are 2 NA/NaNs in H.
 #> ! There are 1 Inf/-Inf in D.
+#> ! There are 1 D with >= 999 cm.
 #> ! There are 1 negative values (< 0) in H, adjusting to 0.
 #> ! There are Names that are not listed in this caclulation.
 #> ! `NA` is not in a list, use `stemv::volumeName()`.

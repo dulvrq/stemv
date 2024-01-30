@@ -103,6 +103,10 @@ dt |>
   dplyr::mutate(Name = volumeName(Region, Spp),
                 V = stemVolume(Name, D, H))
 ```
+```{r}
+## the same as above results
+stemVolume(volumeName(dt$Region, dt$Spp), dt$D, dt$H)
+```
 
 材積式名が有効でなかったり、DやHに`NA`を含む場合、`NA`を返します。
 `stop_if_NA = TRUE`とすることで、計算ができない場合エラーを発生するようにすることもできます。

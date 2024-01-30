@@ -599,6 +599,9 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
   ### check length ---
   if(any(c(length(Name) != 1, length(D) != 1, length(H) != 1)))
     cli_abort(c("x" ="Only single observation is allowed for Name/D/H."))
+  ### check class --
+  if(!is.numeric(D) & !is.na(D)) cli_abort(c("{.tmp D} should be numeric.", "x" = "class {.tmp D} is {.cls {class(D)}}."))
+  if(!is.numeric(H) & !is.na(H)) cli_abort(c("{.tmp H} should be numeric.", "x" = "class {.tmp H} is {.cls {class(H)}}."))
   ### check NA/NaN/Inf ---
   if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
     if(is.na(Name)) cli_abort(c("NA/NaN should be removed from {.tmp Name}.", "x" = "{.tmp Name} is NA/NaN."))
@@ -606,16 +609,15 @@ stemVolumeSingle <- function(Name, D, H, list_data = NULL, off_adj = FALSE, ...)
     if(is.na(H))    cli_abort(c("NA/NaN should be removed from {.tmp H}.", "x" = "{.tmp H} is NA/NaNs."))
     if(is.infinite(D)) cli_abort(c("Inf/-Inf should be removed from {.tmp D}.", "x" = "{.tmp D} is Inf/-Inf."))
     if(is.infinite(H)) cli_abort(c("Inf/-Inf should be removed from {.tmp H}.", "x" = "{.tmp H} is Inf/-Inf."))
+    if(D >= 999) cli_abort(c("{.tmp D} should be < 999 cm.", "x" = "{.tmp D} is {D} cm."))
   } else {
     if(is.na(Name)) cli_alert_warning("{.tmp Name} is NA/NaN.")
     if(is.na(D))    cli_alert_warning("{.tmp D} is NA/NaN.")
     if(is.na(H))    cli_alert_warning("{.tmp H} is NA/NaN.")
     if(is.infinite(D)) cli_alert_warning("{.tmp D} is Inf/-Inf.")
     if(is.infinite(H)) cli_alert_warning("T{.tmp H} is Inf/-Inf.")
+    if(D >= 999) cli_alert_warning("{.tmp D} is very large, should be < 999 cm.")
   }
-  ### check class --
-  if(!is.numeric(D) & !is.na(D)) cli_abort(c("{.tmp D} should be numeric.", "x" = "class {.tmp D} is {.cls {class(D)}}."))
-  if(!is.numeric(H) & !is.na(H)) cli_abort(c("{.tmp H} should be numeric.", "x" = "class {.tmp H} is {.cls {class(H)}}."))
 
   ## adjustment to D & H. if either is NA, return NA ---
   if(is.na(D) | is.na(H)) return(NA)
@@ -1087,25 +1089,6 @@ stemVolume <- function(Name, D, H, ...){
   ## check D, H --
   cli_div(theme = list(.tmp = list(color = "yellow4", "font-style" = "italic", "font-weight" = "bold"), # set color
                        .tmp2 = list(color = "blue", "font-style" = "italic")))
-  if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
-    if(any(is.na(Name))) cli_abort(c("NA/NaNs should be removed from {.tmp Name}.",
-                                     "x" = "There are {sum(is.na(Name))} NA/NaNs in {.tmp Name}."))
-    if(any(is.na(D))) cli_abort(c("NA/NaNs should be removed from {.tmp D}.",
-                                  "x" = "There are {sum(is.na(D))} NA/NaNs in {.tmp D}."))
-    if(any(is.na(H))) cli_abort(c("NA/NaNs should be removed from {.tmp H}.",
-                                  "x" = "There are {sum(is.na(H))} NA/NaNs in {.tmp H}."))
-    if(any(is.infinite(D))) cli_abort(c("Inf/-Inf should be removed from {.tmp D}.",
-                                  "x" = "There are {sum(is.infinite(D))} Inf/-Inf in {.tmp D}."))
-    if(any(is.infinite(H))) cli_abort(c("Inf/-Inf should be removed from {.tmp H}.",
-                                        "x" = "There are {sum(is.infinite(H))} Inf/-Inf in {.tmp H}."))
-  } else {
-    if(any(is.na(Name))) cli_alert_warning("There are {sum(is.na(Name))} NA/NaNs in {.tmp Name}.")
-    if(any(is.na(D))) cli_alert_warning("There are {sum(is.na(D))} NA/NaNs in {.tmp D}.")
-    if(any(is.na(H))) cli_alert_warning("There are {sum(is.na(H))} NA/NaNs in {.tmp H}.")
-    if(any(is.infinite(D))) cli_alert_warning("There are {sum(is.infinite(D))} Inf/-Inf in {.tmp D}.")
-    if(any(is.infinite(H))) cli_alert_warning("There are {sum(is.infinite(H))} Inf/-Inf in {.tmp H}.")
-  }
-
   ## check length ---
   if(length(Name) == 1 & length(D) > 1){  # in case single Name is provided.
     cli_alert_info("{.tmp Name} is a single, but {.tmp D} is multiple. {.tmp Name} is recycled to length {length(D)}.")
@@ -1117,12 +1100,33 @@ stemVolume <- function(Name, D, H, ...){
                              "the length of {.tmp D} is {length(D)}, ",
                              "the length of {.tmp H} is {length(H)}.")))
   }
-
-  ## check the class --
+  ### check class --
   if(!is.numeric(D) & !all(is.na(D))) cli_abort(c("{.tmp D} should be numeric.",
                                                   "x" = "class {.tmp D} is {.cls {class(D)}}."))
   if(!is.numeric(H) & !all(is.na(H))) cli_abort(c("{.tmp H} should be numeric.",
                                                   "x" = "class {.tmp H} is {.cls {class(H)}}."))
+  ### check NA/NaN/Inf ---
+  if("stop_if_NA" %in% names(list(...)) && list(...)[["stop_if_NA"]] == TRUE){
+    if(any(is.na(Name))) cli_abort(c("NA/NaNs should be removed from {.tmp Name}.",
+                                     "x" = "There are {sum(is.na(Name))} NA/NaNs in {.tmp Name}."))
+    if(any(is.na(D))) cli_abort(c("NA/NaNs should be removed from {.tmp D}.",
+                                  "x" = "There are {sum(is.na(D))} NA/NaNs in {.tmp D}."))
+    if(any(is.na(H))) cli_abort(c("NA/NaNs should be removed from {.tmp H}.",
+                                  "x" = "There are {sum(is.na(H))} NA/NaNs in {.tmp H}."))
+    if(any(is.infinite(D))) cli_abort(c("Inf/-Inf should be removed from {.tmp D}.",
+                                  "x" = "There are {sum(is.infinite(D))} Inf/-Inf in {.tmp D}."))
+    if(any(is.infinite(H))) cli_abort(c("Inf/-Inf should be removed from {.tmp H}.",
+                                        "x" = "There are {sum(is.infinite(H))} Inf/-Inf in {.tmp H}."))
+    if(any(D >= 999, na.rm = T)) cli_abort(c("{.tmp D} should be < 999 cm.",
+                                             "x" = "There are {sum(D >= 999, na.rm = T)} {.tmp D} with >= 999 cm."))
+  } else {
+    if(any(is.na(Name))) cli_alert_warning("There are {sum(is.na(Name))} NA/NaNs in {.tmp Name}.")
+    if(any(is.na(D))) cli_alert_warning("There are {sum(is.na(D))} NA/NaNs in {.tmp D}.")
+    if(any(is.na(H))) cli_alert_warning("There are {sum(is.na(H))} NA/NaNs in {.tmp H}.")
+    if(any(is.infinite(D))) cli_alert_warning("There are {sum(is.infinite(D))} Inf/-Inf in {.tmp D}.")
+    if(any(is.infinite(H))) cli_alert_warning("There are {sum(is.infinite(H))} Inf/-Inf in {.tmp H}.")
+    if(any(D >= 999, na.rm = T)) cli_alert_warning(c("There are {sum(D >= 999, na.rm = T)} {.tmp D} with >= 999 cm."))
+  }
 
   ## set progress bar if data is large ---
   if(length(D) > 10^5)  cli_progress_bar("Calculating data", total = length(unique(Name)))
@@ -2021,6 +2025,16 @@ volumeName <- function(Region, Spp, RS = NULL, ...){
     ## check length ---
     cli_div(theme = list(.tmp = list(color = "yellow4", "font-style" = "italic", "font-weight" = "bold"), # set color
                          .tmp2 = list(color = "blue", "font-style" = "italic")))
+    if(length(Region) == 1 & length(Spp) > 1){  # in case single Region is provided.
+      cli_alert_info(
+        "{.tmp Region} is a single, but {.tmp Spp} is multiple. {.tmp Region} is recycled to length {length(Spp)}.")
+      Region <- rep(Region, length(Spp))
+    }
+    if(length(Region) > 1 & length(Spp) == 1){  # in case single Spp is provided.
+      cli_alert_info(
+        "{.tmp Spp} is a single, but {.tmp Region} is multiple. {.tmp Spp} is recycled to length {length(Region)}.")
+      Spp <- rep(Spp, length(Region))
+    }
     if(length(Region) != length(Spp))
       cli_abort(c("The length should be the same for Region/Spp.",
                   "x" = "The length of {.tmp Region} is {length(Region)}, but the length of {.tmp Spp} is {length(Spp)}."))
