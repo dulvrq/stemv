@@ -158,7 +158,7 @@ load("R/sysdata.rda")
 - 誤差が0.0001m<sup>3</sup>以上になる組み合わせは、全体の`r round(100*list_data_for_readme[[3]]/list_data_for_readme[[1]], 1)`%で0.01m<sup>3</sup>以上になる組み合わせは`r round(100*list_data_for_readme[[2]]/list_data_for_readme[[1]], 1)`%です。
 - このうち、0.01m<sup>3</sup>以上の誤差は全て上記1. ~ 2. に起因し、0.0001m<sup>3</sup>以上の誤差は全て上記1. ~ 3.に起因します。
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, include=FALSE}
 kableExtra::kable(list_data_for_readme[[7]] |> dplyr::filter(`差≥0.0001の数` > 0),
                   caption = "表1. 差が存在する材積式における誤差")
 ```
@@ -173,7 +173,7 @@ kableExtra::kable(list_data_for_readme[[7]] |> dplyr::filter(`差≥0.0001の数
 
 ```{r, echo=FALSE}
 kableExtra::kable(list_data_for_readme[[8]] |> dplyr::arrange(dplyr::desc(`一致しない数`)) |> head(10),
-              caption = "表2. 一致しない数が多い10種類の材積式における誤差")
+              caption = "表1. 一致しない数が多い10種類の材積式における誤差")
 ```
 
 ## Reference
