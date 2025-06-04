@@ -8,9 +8,11 @@ volumeName(Region, Spp, RS = NULL, ...)
 }
 \arguments{
 \item{Region}{Character vector. Region/Prefecture name that are listed in \code{RS}.
-Please see the original article by Hosoda et al. (2010) and description in the above program.}
+Please see the original article by Hosoda et al. (2010) and description in the above program.
+Region/Prefecture name in Japanese or English (e.g., "東京" or "Tokyo").}
 
-\item{Spp}{Character vector. Species name in Japanese.
+\item{Spp}{Character vector. Species name in Japanese, English common name, or scientific name.
+(e.g., "スギ", "Japanese cedar", or "Cryptomeria japonica").
 If it does not match any species in the lists, then \code{広葉樹} is returned.
 Please see the original article by Hosoda et al. (2010) and description in the above program.}
 

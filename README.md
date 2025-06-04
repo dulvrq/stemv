@@ -4,6 +4,7 @@
 # stemv
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 このパッケージは単木の胸高直径、樹高および樹種と地域（日本国内）から立木幹材積を計算する関数を提供します。
@@ -47,7 +48,7 @@ volumeName(Region, Spp)
 #> [1] "高知ヒノキ"
 ```
 
-`volumeName()`を利用する場合、樹種はカタカナで記入してください。漢字等にすると全て広葉樹になります。  
+`volumeName()`を利用する場合、樹種は日本語の場合、カタカナで記入してください。漢字等にすると全て広葉樹になります。  
 ただし、`天然スギ`, `天然ヒノキ`, `天然アカマツ`, `広葉樹`,
 `針葉樹`などは例外的に処理できます。
 
@@ -94,6 +95,28 @@ volumeName("アメリカ", "トドマツ", stop_if_NA = T)
 #> ✖ `アメリカ` is not in the region list. There are no such region.
 ```
 
+樹種名と地域名は英語でも指定できます。大文字小文字は区別しません。  
+英語での指定は以下の形式に対応しています：
+
+- 和名の英語表記（例：`sugi`, `hinoki`）
+- 英語の一般名（例：`Japanese cedar`, `Japanese cypress`）
+- 学名（例：`Cryptomeria japonica`, `Chamaecyparis obtusa`）
+- 地域名の英語表記（例：`Tokyo`, `Sapporo`）
+
+``` r
+## species name in English
+volumeName("Tokyo", "sugi")
+#> [1] "東京スギ"
+
+# use Latin name
+volumeName("Tokyo", "Cryptomeria japonica")
+#> [1] "東京スギ"
+
+# use common name
+volumeName("熊本", "Japanese cedar")
+#> [1] "熊本スギ"
+```
+
 立木幹材積の計算はベクトルでも実行できます。
 
 ``` r
@@ -136,7 +159,7 @@ dt2 |>
 #> ! There are 1 D with >= 999 cm.
 #> ! There are 1 negative values (< 0) in H, adjusting to 0.
 #> ! There are Names that are not listed in this caclulation.
-#> ! `NA` is not in a list, use `stemv::volumeName()`.
+#> ! `NA` is not in a list, use `` `stemv::volumeName` ()``.
 #> ! The calculation of V contatins 2 NA/NaNs.
 #>     Region      Spp    D    H         Name        V
 #> 1 宗谷支庁 トドマツ 21.8   NA 旭川トドマツ       NA
@@ -194,233 +217,394 @@ purrr::pmap(list(Name = volumeName(dt$Region, dt$Spp),
 - 誤差が0.01m<sup>3</sup>以上になる組み合わせは全体の1.2%です。
 
 <table>
+
 <caption>
+
 表1. 一致しない数が多い10種類の材積式における誤差
 </caption>
+
 <thead>
+
 <tr>
+
 <th style="text-align:left;">
+
 計算式名
 </th>
+
 <th style="text-align:right;">
+
 組み合わせ数
 </th>
+
 <th style="text-align:right;">
+
 一致しない数
 </th>
+
 <th style="text-align:right;">
+
 差≥0.01の数
 </th>
+
 <th style="text-align:right;">
+
 平均絶対誤差
 </th>
+
 <th style="text-align:right;">
+
 最大誤差
 </th>
+
 </tr>
+
 </thead>
+
 <tbody>
+
 <tr>
+
 <td style="text-align:left;">
+
 青森ヒバ
 </td>
+
 <td style="text-align:right;">
+
 1313
 </td>
+
 <td style="text-align:right;">
+
 408
 </td>
+
 <td style="text-align:right;">
+
 107
 </td>
+
 <td style="text-align:right;">
+
 0.00
 </td>
+
 <td style="text-align:right;">
+
 0.02
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 札幌トドマツ
 </td>
+
 <td style="text-align:right;">
+
 1714
 </td>
+
 <td style="text-align:right;">
+
 303
 </td>
+
 <td style="text-align:right;">
+
 134
 </td>
+
 <td style="text-align:right;">
+
 0.01
 </td>
+
 <td style="text-align:right;">
+
 0.16
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 北見エゾマツ
 </td>
+
 <td style="text-align:right;">
+
 1206
 </td>
+
 <td style="text-align:right;">
+
 244
 </td>
+
 <td style="text-align:right;">
+
 112
 </td>
+
 <td style="text-align:right;">
+
 0.00
 </td>
+
 <td style="text-align:right;">
+
 0.05
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 青森アカマツ
 </td>
+
 <td style="text-align:right;">
+
 803
 </td>
+
 <td style="text-align:right;">
+
 222
 </td>
+
 <td style="text-align:right;">
+
 140
 </td>
+
 <td style="text-align:right;">
+
 0.01
 </td>
+
 <td style="text-align:right;">
+
 0.11
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 高知天然スギ
 </td>
+
 <td style="text-align:right;">
+
 2251
 </td>
+
 <td style="text-align:right;">
+
 210
 </td>
+
 <td style="text-align:right;">
+
 172
 </td>
+
 <td style="text-align:right;">
+
 0.01
 </td>
+
 <td style="text-align:right;">
+
 0.31
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 青森広葉樹
 </td>
+
 <td style="text-align:right;">
+
 1972
 </td>
+
 <td style="text-align:right;">
+
 198
 </td>
+
 <td style="text-align:right;">
+
 78
 </td>
+
 <td style="text-align:right;">
+
 0.00
 </td>
+
 <td style="text-align:right;">
+
 0.07
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 札幌エゾマツ
 </td>
+
 <td style="text-align:right;">
+
 1696
 </td>
+
 <td style="text-align:right;">
+
 183
 </td>
+
 <td style="text-align:right;">
+
 25
 </td>
+
 <td style="text-align:right;">
+
 0.00
 </td>
+
 <td style="text-align:right;">
+
 0.02
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 関東中部ツガ
 </td>
+
 <td style="text-align:right;">
+
 1592
 </td>
+
 <td style="text-align:right;">
+
 181
 </td>
+
 <td style="text-align:right;">
+
 38
 </td>
+
 <td style="text-align:right;">
+
 0.00
 </td>
+
 <td style="text-align:right;">
+
 0.02
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 函館ヒバ
 </td>
+
 <td style="text-align:right;">
+
 1164
 </td>
+
 <td style="text-align:right;">
+
 179
 </td>
+
 <td style="text-align:right;">
+
 57
 </td>
+
 <td style="text-align:right;">
+
 0.00
 </td>
+
 <td style="text-align:right;">
+
 0.04
 </td>
+
 </tr>
+
 <tr>
+
 <td style="text-align:left;">
+
 高知天然ヒノキ
 </td>
+
 <td style="text-align:right;">
+
 1985
 </td>
+
 <td style="text-align:right;">
+
 177
 </td>
+
 <td style="text-align:right;">
+
 103
 </td>
+
 <td style="text-align:right;">
+
 0.00
 </td>
+
 <td style="text-align:right;">
+
 0.04
 </td>
+
 </tr>
+
 </tbody>
+
 </table>
 
 ## Reference

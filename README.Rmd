@@ -57,7 +57,7 @@ Spp <- "ヒノキ"
 volumeName(Region, Spp)
 ```
 
-`volumeName()`を利用する場合、樹種はカタカナで記入してください。漢字等にすると全て広葉樹になります。  
+`volumeName()`を利用する場合、樹種は日本語の場合、カタカナで記入してください。漢字等にすると全て広葉樹になります。  
 ただし、`天然スギ`, `天然ヒノキ`, `天然アカマツ`, `広葉樹`, `針葉樹`などは例外的に処理できます。
 
 ```{r}
@@ -91,6 +91,26 @@ volumeName("アメリカ", "トドマツ", name_invalid = "合致しない")
 ## cause error if you want
 volumeName("アメリカ", "トドマツ", stop_if_NA = T)
 ```
+
+樹種名と地域名は英語でも指定できます。大文字小文字は区別しません。  
+英語での指定は以下の形式に対応しています：
+
+- 和名の英語表記（例：`sugi`, `hinoki`）
+- 英語の一般名（例：`Japanese cedar`, `Japanese cypress`）
+- 学名（例：`Cryptomeria japonica`, `Chamaecyparis obtusa`）
+- 地域名の英語表記（例：`Tokyo`, `Sapporo`）
+
+```{r}
+## species name in English
+volumeName("Tokyo", "sugi")
+
+# use Latin name
+volumeName("Tokyo", "Cryptomeria japonica")
+
+# use common name
+volumeName("熊本", "Japanese cedar")
+```
+
 
 立木幹材積の計算はベクトルでも実行できます。
 
